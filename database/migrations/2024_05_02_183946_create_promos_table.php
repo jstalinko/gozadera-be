@@ -16,10 +16,14 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->enum('discount_type' , ['percent' , 'nominal']);
+            $table->integer('discount_value')->default(0);
             $table->string('image');
             $table->enum('promo_period' , ['allday' , 'weekday' , 'weekend' , 'date'])->default('allday');
             $table->date('promo_start');
             $table->date('promo_end');
+            $table->string('promo_start_time')->nullable();
+            $table->string('promo_end_time')->nullable();
+            $table->enum('status' , ['active' , 'inactive'])->default('active'); 
             $table->timestamps();
         });
     }
