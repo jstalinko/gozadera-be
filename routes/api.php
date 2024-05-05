@@ -31,3 +31,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/banners', [App\Http\Controllers\API\DashboardController::class, 'banner']);
 
 });
+
+Route::get('/send-wa', [App\Http\Controllers\API\EasywaController::class, 'sendMessage']);
