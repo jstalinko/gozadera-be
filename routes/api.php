@@ -28,5 +28,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/product/{id}', [App\Http\Controllers\API\ProductController::class, 'view']);
     Route::get('/outlets' , [App\Http\Controllers\API\OutletController::class , 'outlets']);
     Route::get('/outlet-tables/{outlet_id}' , [App\Http\Controllers\API\OutletController::class , 'outlet_tables']);
+    Route::get('/banners', [App\Http\Controllers\API\DashboardController::class, 'banner']);
 
 });

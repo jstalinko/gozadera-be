@@ -2,6 +2,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Order;
+use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -16,4 +18,8 @@ class StatsOverview extends BaseWidget
             Stat::make('Omzet' , \App\Models\Order::sum('subtotal'))
         ];
     }
+
+    
+
+   
 }
