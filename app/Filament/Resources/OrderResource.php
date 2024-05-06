@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use Closure;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Order;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\OrderResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\OrderResource\RelationManagers;
+use Filament\Tables\Columns\TextColumn;
 
 class OrderResource extends Resource
 {
@@ -39,6 +41,13 @@ class OrderResource extends Resource
                 Select::make('member_id')->label('Member')->relationship('member' , 'username')->required()->native(false)->searchable(['username','email','phone']),
 
                 Select::make('items')->label('Order Items')->options($p)->required()->native(false)->multiple()
+                ->live()->afterStateUpdated(
+                    fn($state, callable $set) => $set('subtotal', array_sum(array_map(function($item){
+                        return explode('|', $item)[1];
+                    }, $state))
+                    )),
+                
+                TextInput::make('subtotal')->label('Subtotal')->disabled()
             ]);
     }
 
@@ -49,7 +58,14 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('outlet.name'),
                 Tables\Columns\TextColumn::make('outlet_table.code'),
                 Tables\Columns\TextColumn::make('member.username'),
-                Tables\Columns\TextColumn::make('items'),
+                Tables\Columns\TextColumn::make('items')->limit(50)->tooltip(function(TextColumn $column, $record){
+                    $items = json_decode($record->items);
+                    $items = array_map(function($item){
+                        $xx = explode('|', $item);
+                        return $xx[0] . ' - IDR ' . number_format($xx[1]);
+                    }, $items);
+                    return implode(', ', $items);
+                }),
                 Tables\Columns\TextColumn::make('subtotal')->money('idr')
 
             ])
