@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\Helper;
 use App\Models\Member;
+use App\Models\WaNotif;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -40,16 +42,29 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        $password = Helper::passwordGenerator(8);
         $member = new Member();
-        $member->name = $request->name;
+        $member->username = $request->username;
         $member->email = $request->email;
-        $member->password = Hash::make($request->password);
+        $member->password = Hash::make($password);
+        $member->phone = $request->phone;
+        $member->address = 'not set';
+        $member->point = 0;
+        $member->status = 'active';
         $member->save();
+
+        /** request whatsapp api */
+        $notifWa = WaNotif::where('type', 'register')->first();
+        
+        $message = Helper::replacer($notifWa->message, ['password' => $password , 'email' => $request->email , 'name' => $request->username ]);
+        $response = Helper::sendWhatsappMessage($request->phone,$message);
+        
 
         return response()->json([
             'code' => 200,
             'status' => 'success',
-            'message' => 'Register success'
+            'message' => 'Register success',
+            'wa_response' => $response
         ]);
     }
 
