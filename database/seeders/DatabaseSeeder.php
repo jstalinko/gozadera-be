@@ -21,43 +21,71 @@ class DatabaseSeeder extends Seeder
         // ]);
         //  \App\Models\Member::factory(100)->create();
         //  \App\Models\Product::factory(100)->create();
-        // \App\Models\OutletTable::factory(20)->create();
+        \App\Models\OutletTable::factory(10)->create();
 
         // \App\Models\Promo::factory(10)->create();
 
-        $wa_notif = [
-            [
-                'type' => 'order',
-            'message' => 'Terima kasih telah memesan di Gozadera, pesanan anda sedang kami proses\n  ORDER ID : {order_id}',
-            ],
-            [
-                'type' => 'register',
-                'message' => 'Terima kasih telah mendaftar di Gozadera, ini adalah link verifikasi anda\n {register_link} \n klik untuk mengaktifkan akun anda',
-            ],
-            [
-                'type' => 'reset_password',
-                'message' => 'Klik link berikut untuk mereset password anda\n {reset_link} \n Jika anda tidak merasa melakukan permintaan ini, abaikan pesan ini',
-            ],
-            [
-                'type' => 'welcome',
-                'message' => 'Selamat datang di Gozadera, nikmati promo kami dengan kode {promo_code} dan dapatkan diskon sebesar {promo_value}%',
-            ],
-            [
-                'type' => 'promo',
-                'message' => 'Promo {promo_name} telah dimulai, dapatkan diskon sebesar {promo_value}% selama {promo_period} hari',
-            ],
-            [
-                'type' => 'custom',
-                'message' => 'Halo {name}, {other}',
-            ],
-            [
-                'type' => 'payment',
-                'message' => 'Terima kasih telah melakukan pembayaran, pembayaran anda telah kami terima\n PAYMENT ID : {payment_id}',
-            ]
-        ];
+        // $wa_notif = [
+        //     [
+        //         'type' => 'order',
+        //     'message' => 'Thanks for your order, your order id is {order_id} and total payment is {total_payment}',
+        //     ],
+        //     [
+        //         'type' => 'register',
+        //         'message' => 'Thanks for joining us, your account has been created!\n\n Email : {email}\n Username : {username}\n Password : {password}\n Please change your password after login',
+        //     ],
+        //     [
+        //         'type' => 'reset_password',
+        //         'message' => 'Your password has been reset, this is your new password\n\n Password : {password}\n Please change your password after login'
+        //     ],
+        //     [
+        //         'type' => 'welcome',
+        //         'message' => 'Welcome to our app, {name}! We are happy to have you as our member',
+        //     ],
+        //     [
+        //         'type' => 'promo',
+        //         'message' => 'We have a new promo for you, {name}! Get {promo} for only {price}! Grab it fast!',
+        //     ],
+        //     [
+        //         'type' => 'custom',
+        //         'message' => 'Halo {name}, {other}',
+        //     ],
+        //     [
+        //         'type' => 'payment',
+        //         'message' => 'Thanks for your payment, your payment id is {payment_id} and total payment is {total_payment}'
+        //     ]
+        // ];
 
-        foreach($wa_notif as $notif){
-            \App\Models\WaNotif::create($notif);
-        }
+        // // foreach($wa_notif as $notif){
+        // //     \App\Models\WaNotif::create($notif);
+        // // }
+
+        // $member_levels = [
+        //     [
+        //         'name' => 'Basic',
+        //         'minumum_spend' => 0,
+        //     ],
+        //     [
+        //         'name' => 'Silver',
+        //         'minumum_spend' => 1000000,
+        //     ],
+        //     [
+        //         'name' => 'Gold',
+        //         'minumum_spend' => 5000000,
+        //     ],
+        //     [
+        //         'name' => 'VIP',
+        //         'minumum_spend' => 10000000,
+        //     ],
+        //     [
+        //         'name' => 'VVIP',
+        //         'minumum_spend' => 50000000,
+        //     ],
+        // ];
+
+        // foreach($member_levels as $level){
+        //     \App\Models\MemberLevel::create($level);
+        // }
+
     }
 }

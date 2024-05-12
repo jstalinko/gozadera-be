@@ -21,6 +21,8 @@ class MemberResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-c-user-group';
 
+    protected static ?string $navigationGroup = 'Member Management';
+
    
     public static function form(Form $form): Form
     {
@@ -40,14 +42,14 @@ class MemberResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')->label('Pic'),
                 Tables\Columns\TextColumn::make('username'),
-                Tables\Columns\TextColumn::make('email')->sortable(),
+                Tables\Columns\TextColumn::make('email')->sortable()->copyable(),
                 Tables\Columns\TextColumn::make('phone'),
-                Tables\Columns\TextColumn::make('point'),
+                Tables\Columns\TextColumn::make('point')->sortable(),
                 Tables\Columns\BadgeColumn::make('status')->color(fn (string $state): string => match ($state) {
                     'inactive' => 'gray',
                     'active' => 'success',
                     'banned' => 'danger',
-                })
+                })->sortable(),
                 
             ])
             ->filters([

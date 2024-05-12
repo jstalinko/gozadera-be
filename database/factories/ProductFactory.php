@@ -22,7 +22,7 @@ class ProductFactory extends Factory
             'description' => fake()->paragraph(),
             'price' => rand(1000000,9999999),
             'item_point' => rand(1,2000),
-            'category' => fake()->randomElement(['food','bevereges' ,'alcohol','other']),
+            'category' => fake()->randomElement(['food','beverages' ,'alcohol','other']),
         ];
     }
 }

@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('member_levels', function (Blueprint $table) {
             $table->id();
-            $table->integer('promo_id')->default(null);
             $table->string('name');
-            $table->text('description');
-            $table->bigInteger('price');
-            
-            $table->integer('item_point')->default(0);
-            $table->enum('category', [ 'food' ,'beverages' ,'alcohol' , 'other' , 'redeemable'])->default('other');
+            $table->integer('minumum_spend');
             
             $table->timestamps();
         });
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('member_levels');
     }
 };

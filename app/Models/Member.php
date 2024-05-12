@@ -20,4 +20,10 @@ class Member extends Model
         'status',
         'image'
     ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+    
 }

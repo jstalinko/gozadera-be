@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\RedeemPoint;
 
 class ProductController extends Controller
 {
@@ -30,6 +31,29 @@ class ProductController extends Controller
         $data['status'] = 'success';
         $data['data'] = $product;
         $data['message'] = 'Get product success';
+
+        return response()->json($data , 200 , [] , JSON_PRETTY_PRINT);
+    }
+    public function category($category): JsonResponse
+    {
+        $products = Product::where('category' , $category)->get();
+        
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['data'] = $products;
+        $data['message'] = 'Get product by category success';
+
+        return response()->json($data , 200 , [] , JSON_PRETTY_PRINT);
+    }
+
+    public function productRedeemables(): JsonResponse
+    {
+        $products = RedeemPoint::with('product')->where('stock' , '>' , 0)->get();
+        
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['data'] = $products;
+        $data['message'] = 'Get product redeemables success';
 
         return response()->json($data , 200 , [] , JSON_PRETTY_PRINT);
     }
