@@ -18,11 +18,9 @@ return new class extends Migration
             $table->integer('pax');
             $table->integer('table_id');
             $table->integer('table_price');
-            $table->json('items')->comment('item_name,item_price,item_id from products');
             $table->integer('subtotal')->comment('total harga table + items');
-
             $table->enum('payment_status',['unpaid' , 'paid','canceled','expired']);
-            
+            $table->enum('status' , ['check_in' , 'check_out' , 'canceled' , 'expired' , 'issued'])->default('issued');
             $table->timestamps();
         });
     }

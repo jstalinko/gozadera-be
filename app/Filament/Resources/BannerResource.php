@@ -46,9 +46,13 @@ class BannerResource extends Resource
             ->columns([
                 ImageColumn::make('image')->label('Image'),
                 TextColumn::make('title'),
-                TextColumn::make('description'),
-                TextColumn::make('link'),
-                BadgeColumn::make('active')->color(fn (string $state): string => match ($state) {
+                TextColumn::make('description')
+                ->limit(50)
+                ->tooltip(
+                    fn (Banner $record) => $record->description
+                )->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('link')->copyable()->toggleable(isToggledHiddenByDefault: true),
+                BadgeColumn::make('status')->color(fn (string $state): string => match ($state) {
                     'inactive' => 'gray',
                     'active' => 'success',
                 })

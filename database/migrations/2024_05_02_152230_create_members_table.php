@@ -21,8 +21,7 @@ return new class extends Migration
             $table->integer('point');
             $table->enum('status' , ['active' , 'inactive' , 'banned']);
             $table->string('image')->default('https://ui-avatars.com/api/?name=Avatar');
-
-
+            $table->longText('qrcode')->nullable();
             $table->timestamps();
         });
     }

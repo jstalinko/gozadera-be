@@ -59,8 +59,8 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('promo_id')
-                    ->numeric()
-                    ->sortable(),
+                    ->getStateUsing(fn (Product $record) => $record->promo?->name ?? 'no promo')
+                    ->label('Promo')->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
@@ -96,7 +96,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // 
         ];
     }
 

@@ -56,7 +56,7 @@ class AuthController extends Controller
         /** request whatsapp api */
         $notifWa = WaNotif::where('type', 'register')->first();
         
-        $message = Helper::replacer($notifWa->message, ['password' => $password , 'email' => $request->email , 'name' => $request->username ]);
+        $message = Helper::replacer($notifWa->message, ['password' => $password , 'email' => $request->email , 'username' => $request->username , 'name' => $request->username]);
         $response = Helper::sendWhatsappMessage($request->phone,$message);
         
 

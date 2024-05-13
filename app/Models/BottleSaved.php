@@ -8,7 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class BottleSaved extends Model
 {
     use HasFactory;
-
+    protected $fillable = [
+        'member_id',
+        'outlet_id',
+        'product_id',
+        'qty',
+        'status',
+        'expired_at',
+        'note',
+        'taken_at',
+        'cancelled_at',
+    ];
     public function member(){
         return $this->belongsTo(Member::class);
     }

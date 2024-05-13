@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\OrderResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\OrderResource\RelationManagers;
+use Filament\Forms\Components\Toggle;
 
 class OrderResource extends Resource
 {
@@ -25,6 +26,7 @@ class OrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
     protected static ?string $navigationGroup = 'Rsvp & Item orders';
+
 
     public static function form(Form $form): Form
     {
@@ -61,17 +63,21 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('outlet.name'),
                 Tables\Columns\TextColumn::make('outlet_table.code'),
                 Tables\Columns\TextColumn::make('member.username'),
-                Tables\Columns\TextColumn::make('items')->limit(50)->tooltip(function (TextColumn $column, $record) {
+                Tables\Columns\TextColumn::make('items')->getStateUsing(function (Order $record) {
                     $items = json_decode($record->items);
-                    $items = array_map(function ($item) {
-                        $xx = explode('|', $item);
-                        return $xx[0] . ' - IDR ' . number_format($xx[1]);
-                    }, $items);
-                    return implode(', ', $items);
-                }),
+                    $html  = '';
+                    foreach($items as $item) {
+                        $item = explode('|', $item);
+                        $price = number_format($item[1]);
+                        $name = $item[0];
+                        $html.= '<li>' . $name . ' -  @' . $price . '</li>';
+                    }
+                    $html.= '';
+                    return $html;
+                })->html()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('subtotal')->money('idr')
 
-            ])
+            ])->searchable()
             ->filters([
                 //
             ])

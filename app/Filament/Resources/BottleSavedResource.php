@@ -25,13 +25,13 @@ class BottleSavedResource extends Resource
             ->schema([
                 Forms\Components\Select::make('member_id')
                     ->relationship('member', 'username')
-                    ->required(),
+                    ->required()->native(false)->searchable(),
                 Forms\Components\Select::make('outlet_id')
                     ->relationship('outlet', 'name')
-                    ->required(),
+                    ->required()->native(false),
                 Forms\Components\Select::make('product_id')
                     ->relationship('product', 'name')
-                    ->required(),
+                    ->required()->native(false)->searchable(),
                 Forms\Components\TextInput::make('qty')
                     ->required()
                     ->numeric(),
@@ -40,10 +40,10 @@ class BottleSavedResource extends Resource
                         'saved' => 'Saved',
                         'expired' => 'Expired',
                         'taken' => 'Taken',
-                    ])
+                    ])->default('saved')
                     ->required(),
                 Forms\Components\DateTimePicker::make('expired_at')
-                    ->required(),
+                    ->required()->default(now()->addDays(7)),
                 Forms\Components\Textarea::make('note')
                     ->columnSpanFull(),
             ]);
@@ -56,25 +56,26 @@ class BottleSavedResource extends Resource
                 Tables\Columns\TextColumn::make('member.username')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('outlet_id')
+                Tables\Columns\TextColumn::make('outlet.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('product_id')
+                Tables\Columns\TextColumn::make('product.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('qty')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\BadgeColumn::make('status'),
                 Tables\Columns\TextColumn::make('expired_at')
                     ->dateTime()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('note'),
                 Tables\Columns\TextColumn::make('taken_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('cancelled_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

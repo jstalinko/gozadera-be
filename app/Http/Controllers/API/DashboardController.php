@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MemberLevel;
 use App\Models\Order;
 use DB;
+use App\Models\Promo;
 
 class DashboardController extends Controller
 {
@@ -45,6 +46,19 @@ class DashboardController extends Controller
         $data['status'] = 'success';
         $data['data'] = $top10spender;
         $data['message'] = 'Get top 10 spender success';
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function promo(Request $request): JsonResponse
+    {
+        $period = $request->period;
+        $promos = Promo::where('status', 'active')->where('promo_period' , $period)->with('product')->get();
+
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['data'] = $promos;
+        $data['message'] = 'Get all promos success';
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }

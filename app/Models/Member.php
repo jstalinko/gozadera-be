@@ -26,4 +26,5 @@ class Member extends Model
         'remember_token',
     ];
     
+
 }

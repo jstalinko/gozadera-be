@@ -12,6 +12,7 @@ class OrderChart extends ChartWidget
     protected static ?string $heading = 'Chart';
     protected static string $color = 'success';
     protected static string $label = 'Orders';
+    protected static ?int $sort = 2;
 
     protected function getData(): array
     {

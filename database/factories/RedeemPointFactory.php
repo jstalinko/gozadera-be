@@ -17,7 +17,9 @@ class RedeemPointFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'product_id' => rand(1, 10),
+            'point' => rand(1000, 10000),
+            'stock' => rand(3, 10),
         ];
     }
 }

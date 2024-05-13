@@ -39,7 +39,7 @@ class OutletController extends Controller
     }
     public function outletTableByFloor(Request $request): JsonResponse
     {
-        $outlets = OutletTable::where('outlet_id',$request->outlet_id)->where('floor',$request->floor)->get();
+        $outlets = OutletTable::where('outlet_id',$request->outlet_id)->where('floor',$request->floor)->where('status' , 'available')->get();
         
         $data['code'] = 200;
         $data['status'] = 'success';

@@ -15,7 +15,7 @@ class StatsOverview extends BaseWidget
             Stat::make('Members',\App\Models\Member::count()),
             Stat::make('Orders',\App\Models\Order::count()),
             Stat::make('Product'  ,\App\Models\Order::count()),
-            Stat::make('Omzet' , \App\Models\Order::sum('subtotal'))
+            Stat::make('Omzet' , number_format(\App\Models\Order::sum('subtotal')))
         ];
     }
 

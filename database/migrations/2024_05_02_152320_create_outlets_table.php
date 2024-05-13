@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('private_room');
             $table->text('gmaps_url');
             $table->string('image')->default('https://placehold.co/600x400.png');
+            $table->string('area_image')->default('https://placehold.co/600x400.png');
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

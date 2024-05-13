@@ -40,7 +40,7 @@ class MemberResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')->label('Pic'),
+                Tables\Columns\ImageColumn::make('image')->label('Pic')->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('username'),
                 Tables\Columns\TextColumn::make('email')->sortable()->copyable(),
                 Tables\Columns\TextColumn::make('phone'),

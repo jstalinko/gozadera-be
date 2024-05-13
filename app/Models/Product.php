@@ -18,6 +18,6 @@ class Product extends Model
     ];
     public function promo()
     {
-        return $this->hasOne(Promo::class);
+        return $this->hasOne(Promo::class , 'id' , 'promo_id');
     }
 }

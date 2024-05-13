@@ -13,7 +13,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // \App\Models\User::factory(10)->create();
-
+        //\App\Models\Banner::factory(6)->create();
+        \App\Models\RedeemPoint::factory(10)->create();
         // \App\Models\User::factory()->create([
         //     'name' => 'Administrator',
         //     'email' => 'admin@gozadera.id',
@@ -21,7 +22,7 @@ class DatabaseSeeder extends Seeder
         // ]);
         //  \App\Models\Member::factory(100)->create();
         //  \App\Models\Product::factory(100)->create();
-        \App\Models\OutletTable::factory(10)->create();
+        // \App\Models\OutletTable::factory(10)->create();
 
         // \App\Models\Promo::factory(10)->create();
 
@@ -56,9 +57,9 @@ class DatabaseSeeder extends Seeder
         //     ]
         // ];
 
-        // // foreach($wa_notif as $notif){
-        // //     \App\Models\WaNotif::create($notif);
-        // // }
+        // foreach($wa_notif as $notif){
+        //     \App\Models\WaNotif::create($notif);
+        // }
 
         // $member_levels = [
         //     [

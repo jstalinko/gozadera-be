@@ -22,7 +22,7 @@ class PromoFactory extends Factory
             'discount_type' => $this->faker->randomElement(['percent', 'nominal']),
             'discount_value' => $this->faker->randomNumber(2),
             'image' => $this->faker->imageUrl(),
-            'promo_period' => $this->faker->randomElement(['allday', 'weekday', 'weekend', 'date']),
+            'promo_period' => $this->faker->randomElement(['everyday', 'weekday', 'weekend', 'event']),
             'promo_start' => $this->faker->date(),
             'promo_end' => $this->faker->date(),
             'promo_start_time' => '00:00:00',

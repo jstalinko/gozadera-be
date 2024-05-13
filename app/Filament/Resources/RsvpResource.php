@@ -2,16 +2,19 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\RsvpResource\Pages;
-use App\Filament\Resources\RsvpResource\RelationManagers;
-use App\Models\Rsvp;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\Rsvp;
 use Filament\Tables;
+use Filament\Forms\Get;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\RsvpResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\RsvpResource\RelationManagers;
+use App\Models\OutletTable;
+use Filament\Forms\Set;
 
 class RsvpResource extends Resource
 {
@@ -25,29 +28,47 @@ class RsvpResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('member_id')
+                Forms\Components\Select::make('member_id')
+                    ->relationship('member' , 'username')
+                    ->searchable()
+                    ->native(false)
+                    ->required(),
+                Forms\Components\Select::make('outlet_id')
+                    ->relationship('outlet' , 'name')
+                    ->native(false)
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('outlet_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('pax')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('table_id')
+                    ->live(onBlur: true),
+                Forms\Components\Select::make('table_id')
+                    ->relationship('outlet_tables' , 'code' , function (Builder $query , Get $get) {
+                        $query->where('outlet_id', $get('outlet_id'));
+                        $query->where('status', 'available');
+                    })
+                    ->native(false)
+                    ->visible(fn (Get $get) => filled($get('outlet_id')))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->floor . ' Floor - Table No:' .$record->code . ' - Max Pax:'. $record->max_pax)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (Set $set,$state) {
+                        $set('pax', OutletTable::find($state)->max_pax);
+                        $set('table_price', number_format(OutletTable::find($state)->price));
+                        $set('subtotal', number_format(OutletTable::find($state)->price));
+
+                    }),
+                    
+                    Forms\Components\TextInput::make('pax')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('table_price')
                     ->required()
-                    ->numeric(),
-                Forms\Components\Textarea::make('items')
-                    ->required()
-                    ->columnSpanFull(),
+                    ->disabled()->prefix('IDR'),
                 Forms\Components\TextInput::make('subtotal')
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('payment_status')
-                    ->required(),
+                    ->disabled()->prefix('IDR'),
+                Forms\Components\Select::make('payment_status')
+                    ->options([
+                        'unpaid' => 'Unpaid',
+                        'paid' => 'Paid',
+                    ])
+                    ->required()->native(false),
             ]);
     }
 
@@ -55,25 +76,39 @@ class RsvpResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('member_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('member.username')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('outlet_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('outlet.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('pax')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('table_id')
-                    ->numeric()
+                    ->getStateUsing(function (Rsvp $record) {
+                        return $record->outlet_tables->floor . ' Floor - Table No:' . $record->outlet_tables->code ;
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('table_price')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()->money('idr'),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->numeric()
+                    ->sortable()->money('idr'),
+                Tables\Columns\BadgeColumn::make('payment_status')->color(fn (string $state): string => match ($state) {
+                    'unpaid' => 'danger',
+                    'paid' => 'success',
+                    'expired' => 'grey',
+                    'cancelled' => 'grey',
+                })
                     ->sortable(),
-                Tables\Columns\TextColumn::make('payment_status'),
+                Tables\Columns\BadgeColumn::make('status')->color(fn (string $state): string => match ($state) {
+                    'check_in' => 'success',
+                    'check_out' => 'danger',
+                    'cancelled' => 'grey',
+                    'expired' => 'grey',
+                    'issued' => 'primary',
+                })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('discount_type' , ['percent' , 'nominal']);
             $table->integer('discount_value')->default(0);
             $table->string('image');
-            $table->enum('promo_period' , ['allday' , 'weekday' , 'weekend' , 'date'])->default('allday');
+            $table->enum('promo_period' , ['everyday' , 'weekday' , 'weekend' , 'event'])->default('everyday');
             $table->date('promo_start');
             $table->date('promo_end');
             $table->string('promo_start_time')->nullable();

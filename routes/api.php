@@ -39,4 +39,5 @@ Route::get('/product/{id}', [App\Http\Controllers\API\ProductController::class, 
 Route::get('/category/{category}', [App\Http\Controllers\API\ProductController::class, 'category']);
 Route::get('/send-wa', [App\Http\Controllers\API\EasywaController::class, 'sendMessage']);
 Route::get('/top-spender', [App\Http\Controllers\API\DashboardController::class, 'top10spender']);
-Route::get('/product-redeemables', [App\Http\Controllers\API\ProductController::class, 'productRedeemables']);
+    Route::get('/promos/{period}', [App\Http\Controllers\API\DashboardController::class, 'promo']);
+    Route::get('/product-redeemables', [App\Http\Controllers\API\ProductController::class, 'productRedeemables']);
