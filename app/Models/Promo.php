@@ -11,6 +11,6 @@ class Promo extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'id', 'promo_id');
+        return $this->hasMany(Product::class , 'promo_id' , 'id');
     }
 }

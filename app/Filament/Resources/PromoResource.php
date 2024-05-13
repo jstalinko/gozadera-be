@@ -71,7 +71,8 @@ class PromoResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->searchable();
     }
 
     public static function getRelations(): array

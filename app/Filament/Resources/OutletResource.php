@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\OutletResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\OutletResource\RelationManagers;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
@@ -43,7 +45,7 @@ class OutletResource extends Resource
     ->imageCropAspectRatio('16:9')
     ->imageResizeTargetWidth('1920')
     ->imageResizeTargetHeight('1080'),
-
+                FileUpload::make('area_image')->label('Table Maps'),
                Section::make('Facilities')->schema([
                 Toggle::make('is_bar')->label('is Bar available?'),
                 Toggle::make('is_karoke')->label('is Karoke available?'),
@@ -62,7 +64,8 @@ class OutletResource extends Resource
                 TextColumn::make('name'),
                 TextColumn::make('tagline'),
                 ImageColumn::make('image'),
-                
+                ImageColumn::make('area_image')->label('Table Maps')->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\IconColumn::make('active')->boolean(),
                 
             ])
             ->filters([

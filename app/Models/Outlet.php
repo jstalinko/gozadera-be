@@ -19,7 +19,8 @@ class Outlet extends Model
         'is_karoke',
         'is_bar',
         'private_room',
-        'active'
+        'active',
+        'area_image'
     ];
 
     

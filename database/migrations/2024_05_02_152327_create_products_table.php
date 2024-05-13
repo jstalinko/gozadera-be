@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->bigInteger('price');
-            
+            $table->string('image')->default('https://placehold.co/400x400?text=No+Image');       
             $table->integer('item_point')->default(0);
             $table->enum('category', [ 'food' ,'beverages' ,'alcohol' , 'other' , 'redeemable'])->default('other');
             

@@ -51,6 +51,7 @@ class ProductResource extends Resource
                         'other' => 'Other',
                         'redeemable' => 'Redeemable',
                     ]),
+                Forms\Components\FileUpload::make('image')
             ]);
     }
 
@@ -61,6 +62,9 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('promo_id')
                     ->getStateUsing(fn (Product $record) => $record->promo?->name ?? 'no promo')
                     ->label('Promo')->sortable(),
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Image')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')

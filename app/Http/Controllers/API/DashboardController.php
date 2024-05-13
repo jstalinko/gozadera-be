@@ -7,6 +7,7 @@ use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\BottleSaved;
 use App\Models\MemberLevel;
 use App\Models\Order;
 use DB;
@@ -59,6 +60,19 @@ class DashboardController extends Controller
         $data['status'] = 'success';
         $data['data'] = $promos;
         $data['message'] = 'Get all promos success';
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function myBottles(Request $request): JsonResponse
+    {
+
+        $myBottles = BottleSaved::where('member_id', $request->member_id)->with('product')->with('outlet')->get();
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['data'] = $myBottles;
+        $data['count'] = $myBottles->count();
+        $data['message'] = 'Get my bottles success';
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
