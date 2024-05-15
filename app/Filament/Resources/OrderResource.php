@@ -33,7 +33,7 @@ class OrderResource extends Resource
         $product = Product::all();
         $p = [];
         foreach ($product as $ps) {
-            $p[$ps->name . '|' . $ps->price] = '(' . $ps->category . ') ' . $ps->name . ' - IDR ' . number_format($ps->price);
+            $p[$ps->id.'|'.$ps->name . '|' . $ps->price] = '(' . $ps->category . ') ' . $ps->name . ' - IDR ' . number_format($ps->price);
         }
 
         return $form
@@ -47,7 +47,7 @@ class OrderResource extends Resource
                         fn ($state, callable $set) => $set(
                             'subtotal',
                             number_format(array_sum(array_map(function ($item) {
-                                return explode('|', $item)[1];
+                                return explode('|', $item)[2];
                             }, $state)))
                         )
                     ),
@@ -61,16 +61,18 @@ class OrderResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('outlet.name'),
-                Tables\Columns\TextColumn::make('outlet_table.code'),
+                Tables\Columns\TextColumn::make('outlet_table')->getStateUsing(function (Order $record) {
+                    return $record->outlet_table->floor . ' Floor | Table No : '.  $record->outlet_table->code;
+                }),
                 Tables\Columns\TextColumn::make('member.username'),
                 Tables\Columns\TextColumn::make('items')->getStateUsing(function (Order $record) {
                     $items = json_decode($record->items);
                     $html  = '';
                     foreach($items as $item) {
-                        $item = explode('|', $item);
-                        $price = number_format($item[1]);
-                        $name = $item[0];
-                        $html.= '<li>' . $name . ' -  @' . $price . '</li>';
+                        $price = number_format($item->price);
+                        $name = $item->name;
+                        $qty = $item->qty;
+                        $html.= '<li>(x'.$qty.') ' . $name . ' -  @' . $price . '</li>';
                     }
                     $html.= '';
                     return $html;

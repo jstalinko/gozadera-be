@@ -35,11 +35,20 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/my-bottles' , [App\Http\Controllers\API\DashboardController::class , 'myBottles']);
 
     Route::post('/rsvp-multi', [App\Http\Controllers\API\RSVPController::class, 'rsvpMulti']);
+
+    Route::post('/order-product' , [App\Http\Controllers\API\OrderController::class , 'orderProduct']);
+    Route::get('/event/{category}', [App\Http\Controllers\API\EventController::class, 'eventCategory']);
+    Route::get('/event', [App\Http\Controllers\API\EventController::class, 'events']);
+
+    Route::post('/update-profile',[App\Http\Controllers\API\DashboardController::class,'updateProfile']);
+
+    Route::get('/my-ticket' , [App\Http\Controllers\API\RSVPController::class , 'myTicket']);
+
 });
 Route::get('/product/{id}', [App\Http\Controllers\API\ProductController::class, 'view']);
 
 Route::get('/category/{category}', [App\Http\Controllers\API\ProductController::class, 'category']);
 Route::get('/send-wa', [App\Http\Controllers\API\EasywaController::class, 'sendMessage']);
 Route::get('/top-spender', [App\Http\Controllers\API\DashboardController::class, 'top10spender']);
-Route::get('/promos/{period}', [App\Http\Controllers\API\DashboardController::class, 'promo']);
 Route::get('/product-redeemables', [App\Http\Controllers\API\ProductController::class, 'productRedeemables']);
+

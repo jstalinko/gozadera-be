@@ -16,11 +16,10 @@ return new class extends Migration
             $table->string('invoice');
             $table->integer('member_id');
             $table->integer('outlet_id');
-            $table->integer('pax');
             $table->json('outlet_tables');
-            $table->integer('table_price');
             $table->integer('subtotal');
             $table->integer('total')->default(0);
+            $table->date('rsvp_date')->default(now());
             $table->enum('payment_status',['unpaid' , 'paid','canceled','expired']);
             $table->string('payment_method');
             $table->enum('status' , ['check_in' , 'check_out' , 'canceled' , 'expired' , 'issued'])->default('issued');
