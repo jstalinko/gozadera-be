@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\PromoResource\Pages;
+namespace App\Filament\Resources\GalleryResource\Pages;
 
-use App\Filament\Resources\PromoResource;
+use App\Filament\Resources\GalleryResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListPromos extends ListRecords
+class ListGalleries extends ListRecords
 {
-    protected static string $resource = PromoResource::class;
+    protected static string $resource = GalleryResource::class;
 
     protected function getHeaderActions(): array
     {

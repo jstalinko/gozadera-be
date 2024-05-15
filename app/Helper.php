@@ -68,17 +68,48 @@ class Helper
         return self::http($endpoint, 'POST', $body, $headers);
     }
 
-   public static function replacer($content,$replaces= [])
-   {
-         foreach ($replaces as $key => $value) {
-              $content = str_replace('{'.$key.'}', $value, $content);
-         }
-         return $content;
-   }
+    public static function replacer($content, $replaces = [])
+    {
+        foreach ($replaces as $key => $value) {
+            $content = str_replace('{' . $key . '}', $value, $content);
+        }
+        return $content;
+    }
 
-   public static function passwordGenerator($length = 8)
-   {
+    public static function passwordGenerator($length = 8)
+    {
         $password = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', $length)), 0, $length);
         return $password;
-   }
+    }
+
+    public static function invoice($id, $outlet_id)
+    {
+        $invoice = date('Ymd') . $id . $outlet_id . rand(100, 999);
+        return $invoice;
+    }
+    public static function saveSvgToPng($base64_string, $filename)
+    {
+        $output_file = public_path('storage/userqr/' . $filename . '.svg');
+
+        if (!file_exists($output_file)) {
+
+            if (!file_exists(public_path('storage/userqr'))) {
+                mkdir(public_path('storage/userqr'), 0777, true);
+            }
+            $ifp = fopen($output_file, 'wb');
+
+            // split the string on commas
+            // $data[ 0 ] == "data:image/png;base64"
+            // $data[ 1 ] == <actual base64 string>
+            $data = explode(',', $base64_string);
+
+            // we could add validation here with ensuring count( $data ) > 1
+            fwrite($ifp, base64_decode($data[1]));
+
+            // clean up the file resource
+            fclose($ifp);
+        }
+
+        return asset('storage/userqr/' . $filename.'.svg');
+    }
 }

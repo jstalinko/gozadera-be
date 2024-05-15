@@ -13,14 +13,19 @@ return new class extends Migration
     {
         Schema::create('rsvps', function (Blueprint $table) {
             $table->id();
+            $table->string('invoice');
             $table->integer('member_id');
             $table->integer('outlet_id');
             $table->integer('pax');
-            $table->integer('table_id');
+            $table->json('outlet_tables');
             $table->integer('table_price');
-            $table->integer('subtotal')->comment('total harga table + items');
+            $table->integer('subtotal');
+            $table->integer('total')->default(0);
             $table->enum('payment_status',['unpaid' , 'paid','canceled','expired']);
+            $table->string('payment_method');
             $table->enum('status' , ['check_in' , 'check_out' , 'canceled' , 'expired' , 'issued'])->default('issued');
+            $table->integer('pax_left')->default(0);
+
             $table->timestamps();
         });
     }

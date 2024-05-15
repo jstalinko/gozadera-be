@@ -35,7 +35,13 @@ class BannerResource extends Resource
                 TextInput::make('title')->required()->minLength(4),
                 TextInput::make('description')->required()->minLength(10),
                 TextInput::make('link')->default('#'),
-                FileUpload::make('image')->required(),
+                FileUpload::make('image')->required()
+                // acceptedFileType gif
+                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif'])
+                ->imageEditor()
+                ->imageEditorViewportWidth('500')
+                ->imageEditorViewportHeight('500')
+                ->maxSize(10000),
                 Toggle::make('active')->default(true),
             ]);
     }

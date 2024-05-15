@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Promo extends Model
+class Event extends Model
 {
     use HasFactory;
 
-    public function product()
+    public function outlet()
     {
-        return $this->hasMany(Product::class , 'promo_id' , 'id');
+        return $this->belongsTo(Outlet::class);
     }
 }

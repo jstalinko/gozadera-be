@@ -13,7 +13,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-        $member = Member::where('email', $credentials['email'])->first();
+        $member = Member::where('email', $credentials['email'])->first()->makeHidden(['qrcode']);
         if ($member) {
             if (Hash::check($credentials['password'], $member->password)) {
                 $token = $member->createToken('token-name')->plainTextToken;
@@ -22,6 +22,7 @@ class AuthController extends Controller
                     'status' => 'success',
                     'token' => $token,
                     'member' => $member,
+                    'qrcode' => Helper::saveSvgToPng($member->qrcode , $member->id.$member->username.'_qrcode'),
                     'message' => 'Login success'
                 ]);
             }else{
@@ -70,20 +71,27 @@ class AuthController extends Controller
 
     public function forgotPassword(Request $request)
     {
-        $member = Member::where('email', $request->email)->first();
+        $member = Member::where('phone', $request->phone)->first();
+        $newPassword = Helper::passwordGenerator(8);
         if ($member) {
-            $member->password = Hash::make($request->password);
+            $member->password = Hash::make($newPassword);
             $member->save();
+            $notifWa = WaNotif::where('type', 'forgot_password')->first();
+            $message = Helper::replacer($notifWa->message, ['password' => $newPassword , 'email' => $member->email , 'username' => $member->username , 'name' => $member->username]);
+            $response = Helper::sendWhatsappMessage($request->phone,$message);
+
+
             return response()->json([
                 'code' => 200,
                 'status' => 'success',
-                'message' => 'Password updated'
+                'message' => 'Password updated',
+                'wa_response' => $response,
             ]);
         }else{
             return response()->json([
                 'code' => 404,
                 'status' => 'error',
-                'message' => 'Email not found'
+                'message' => 'Phone not found'
             ], 404);
         }
     }

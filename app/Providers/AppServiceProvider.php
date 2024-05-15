@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
         Filament::registerNavigationGroups([
             'Rsvp & Item orders',
             'Products',
+            'Events',
             'Outlet & Tables',
             'Member Management',
             'Settings',

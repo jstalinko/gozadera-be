@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('events', function (Blueprint $table) {
             $table->id();
+            $table->integer('outlet_id');
+            $table->enum('type',['event' , 'everyday','weekend','weekday']);
             $table->string('name');
             $table->text('description');
-            $table->bigInteger('price');
-            $table->string('image')->default('https://placehold.co/400x400?text=No+Image');       
-            $table->enum('category', [ 'food' ,'beverages' ,'alcohol' , 'other' , 'redeemable'])->default('other');
-            $table->integer('stock');
+            $table->string('image')->default('https://placehold.co/400x400?text=No+Image');
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
+            $table->enum('status' ,['active' , 'inactive'])->default('active');
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('events');
     }
 };

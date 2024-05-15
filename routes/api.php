@@ -33,6 +33,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/table-detail/{code}', [App\Http\Controllers\API\OutletController::class, 'tableDetail']);
     Route::get('/banners', [App\Http\Controllers\API\DashboardController::class, 'banner']);
     Route::get('/my-bottles' , [App\Http\Controllers\API\DashboardController::class , 'myBottles']);
+
+    Route::post('/rsvp-multi', [App\Http\Controllers\API\RSVPController::class, 'rsvpMulti']);
 });
 Route::get('/product/{id}', [App\Http\Controllers\API\ProductController::class, 'view']);
 

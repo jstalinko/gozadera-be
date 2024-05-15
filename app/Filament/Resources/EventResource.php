@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
-use App\Models\Product;
+use App\Filament\Resources\EventResource\Pages;
+use App\Filament\Resources\EventResource\RelationManagers;
+use App\Models\Event;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,38 +13,47 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ProductResource extends Resource
+class EventResource extends Resource
 {
-    protected static ?string $model = Product::class;
+    protected static ?string $model = Event::class;
 
-    protected static ?string $navigationIcon = 'fas-shopping-basket';
-
-    protected static ?string $navigationGroup = 'Products';
-
+    protected static ?string $navigationIcon = 'fas-calendar-alt';
+    protected static ?string $navigationGroup = 'Events';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('outlet_id')
+                    ->required()
+                    ->relationship('outlet' , 'name')
+                    ->native(false),
+                Forms\Components\Select::make('type')
+                    ->options([
+                        'event' => 'Event',
+                        'everyday' => 'Everyday',
+                        'weekend' => 'Weekend',
+                        'weekday' => 'Weekday',
+                    ])
+                    ->native(false)
+                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->columnSpanFull(),
                 Forms\Components\Textarea::make('description')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('$'),
                 Forms\Components\FileUpload::make('image')
                     ->image()
-                    ->required(),
-                Forms\Components\TextInput::make('stock')
                     ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('category')
+                    ->columnSpanFull(),
+                Forms\Components\DateTimePicker::make('start_date')
                     ->required(),
+                Forms\Components\DateTimePicker::make('end_date')
+                    ->required(),
+                Forms\Components\Toggle::make('status')
+                    ->default('active'),
             ]);
     }
 
@@ -52,22 +61,19 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('outlet.name')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->money('idr')
-                    ->sortable(),
                 Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('stock')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('start_date')
+                    ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('category'),
-                Tables\Columns\BadgeColumn::make('stock')
-                    ->colors([
-                        'danger' => fn ($record) => $record->stock <= 0,
-                        'warning' => fn ($record) => $record->stock < 10,
-                        'success' => fn ($record) => $record->stock >= 10,
-                    ]),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->dateTime()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('status'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -101,10 +107,10 @@ class ProductResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProducts::route('/'),
-            'create' => Pages\CreateProduct::route('/create'),
-            'view' => Pages\ViewProduct::route('/{record}'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'index' => Pages\ListEvents::route('/'),
+            'create' => Pages\CreateEvent::route('/create'),
+            'view' => Pages\ViewEvent::route('/{record}'),
+            'edit' => Pages\EditEvent::route('/{record}/edit'),
         ];
     }
 }
