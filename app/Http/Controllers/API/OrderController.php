@@ -37,4 +37,16 @@ class OrderController extends Controller
             ]
             ]);
     }
+
+    public function myOrder(): JsonResponse
+    {
+        $member_id = auth()->user()->id;
+        $orders = Order::where('member_id', $member_id)->with('outlet')->with('outlet_table')->orderBy('id', 'desc')->get();
+        return response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'message' => 'My Orders',
+            'data' => $orders
+        ]);
+    }
 }

@@ -21,6 +21,7 @@ class MemberFactory extends Factory
         
         $username = fake()->userName();
         $email = fake()->userName().'@gmail.com';
+        $user_id = fake()->unique()->numberBetween(1, 100);
         return [
             'username' => $username,
             'email' => $email,
@@ -30,7 +31,7 @@ class MemberFactory extends Factory
             'point' => rand(0,100000),
             'status' => fake()->randomElement(['active' , 'inactive' , 'banned']),
             'image' => 'https://ui-avatars.com/api/?name='.fake()->userName(),
-            'qrcode' => $qrcode->render(base64_encode($username.'|'.$email)),
+            'qrcode' => $qrcode->render(base64_encode($user_id)),
         ];
     }
 }

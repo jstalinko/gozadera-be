@@ -26,8 +26,11 @@ class GalleryResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('event_id')
-                    ->relationship('event', 'name')
-                    ->nullable()->native(false)->default(null)->columnSpanFull(),
+                    ->relationship('event', 'name', fn (Builder $query) => $query->whereDate('end_date', '<=', now()))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name} [FINISHED]")
+                    ->nullable()->native(false)->default(null)->columnSpanFull()
+                    ->helperText('Select an event that has finished')
+                    ,
                 Forms\Components\FileUpload::make('image')
                     ->image()
                     ->required()->columnSpanFull(),

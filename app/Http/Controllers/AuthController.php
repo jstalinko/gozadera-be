@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helper\Helper;
 use App\Models\Member;
 use App\Models\WaNotif;
+use chillerlan\QRCode\QRCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,8 +14,9 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-        $member = Member::where('email', $credentials['email'])->first()->makeHidden(['qrcode']);
+        $member = Member::where('email', $credentials['email'])->first();
         if ($member) {
+            $member->makeHidden(['qrcode']);
             if (Hash::check($credentials['password'], $member->password)) {
                 $token = $member->createToken('token-name')->plainTextToken;
                 return response()->json([
@@ -44,6 +46,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $password = Helper::passwordGenerator(8);
+        $qr = new QRCode();
         $member = new Member();
         $member->username = $request->username;
         $member->email = $request->email;
@@ -52,6 +55,7 @@ class AuthController extends Controller
         $member->address = 'not set';
         $member->point = 0;
         $member->status = 'active';
+        $member->qrcode = $qr->render(base64_encode($member->id));
         $member->save();
 
         /** request whatsapp api */

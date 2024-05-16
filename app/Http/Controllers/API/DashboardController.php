@@ -4,12 +4,13 @@ namespace App\Http\Controllers\API;
 
 use DB;
 use App\Models\Order;
-use App\Models\Promo;
 use App\Models\Banner;
 use App\Models\Member;
 use App\Models\BottleSaved;
 use App\Models\MemberLevel;
 use Illuminate\Http\Request;
+use App\Models\RedeemHistory;
+use App\Models\PaymentSetting;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -52,18 +53,7 @@ class DashboardController extends Controller
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function promo(Request $request): JsonResponse
-    {
-        $period = $request->period;
-        $promos = Promo::where('status', 'active')->where('promo_period', $period)->with('product')->get();
 
-        $data['code'] = 200;
-        $data['status'] = 'success';
-        $data['data'] = $promos;
-        $data['message'] = 'Get all promos success';
-
-        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-    }
 
     public function myBottles(Request $request): JsonResponse
     {
@@ -125,6 +115,42 @@ class DashboardController extends Controller
         $data['message'] = 'Update profile success';
         $data['data'] = $request->all();
 
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function getPayments(Request $request): JsonResponse
+    {
+        $type = $request->type;
+        $paymentSetting = PaymentSetting::where('type', $type)->get();
+        
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['data'] = $paymentSetting;
+        $data['message'] = 'Get payment setting success';
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+
+    }
+
+    public function redeemHistory(): JsonResponse
+    {
+        $redeem = RedeemHistory::where('member_id', auth()->user()->id)->with('product')->with('redeem_point')->get();
+        
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['data'] = $redeem;
+        $data['message'] = 'Get redeem history success';
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function profile(): JsonResponse
+    {
+        $member = Member::find(auth()->user()->id);
+        $member->level = MemberLevel::seeLevel($member->id);
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['data'] = $member;
+        $data['message'] = 'Get profile success';
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 }

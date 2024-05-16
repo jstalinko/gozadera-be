@@ -29,8 +29,8 @@ class Rsvp extends Model
         return $this->belongsTo(Outlet::class);
     }
 
-    public function outlet_tables()
+    public function payments()
     {
-        return $this->belongsTo(OutletTable::class , 'table_id' , 'id');
+        return $this->hasMany(PaymentSetting::class , 'type' , 'payment_method');
     }
 }

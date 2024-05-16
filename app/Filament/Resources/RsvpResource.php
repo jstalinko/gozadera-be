@@ -23,38 +23,37 @@ class RsvpResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
 
     protected static ?string $navigationGroup = 'Rsvp & Item orders';
-    
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('member_id')
-                    ->relationship('member' , 'username')
+                    ->relationship('member', 'username')
                     ->searchable()
                     ->native(false)
                     ->required(),
                 Forms\Components\Select::make('outlet_id')
-                    ->relationship('outlet' , 'name')
+                    ->relationship('outlet', 'name')
                     ->native(false)
                     ->required()
                     ->live(onBlur: true),
                 Forms\Components\Select::make('table_id')
-                    ->relationship('outlet_tables' , 'code' , function (Builder $query , Get $get) {
+                    ->relationship('outlet_tables', 'code', function (Builder $query, Get $get) {
                         $query->where('outlet_id', $get('outlet_id'));
                         $query->where('status', 'available');
                     })
                     ->native(false)
                     ->visible(fn (Get $get) => filled($get('outlet_id')))
-                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->floor . ' Floor - Table No:' .$record->code . ' - Max Pax:'. $record->max_pax)
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->floor . ' Floor - Table No:' . $record->code . ' - Max Pax:' . $record->max_pax)
                     ->live(onBlur: true)
-                    ->afterStateUpdated(function (Set $set,$state) {
+                    ->afterStateUpdated(function (Set $set, $state) {
                         $set('pax', OutletTable::find($state)->max_pax);
                         $set('table_price', number_format(OutletTable::find($state)->price));
                         $set('subtotal', number_format(OutletTable::find($state)->price));
-
                     }),
-                    
-                    Forms\Components\TextInput::make('pax')
+
+                Forms\Components\TextInput::make('pax')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('table_price')
@@ -76,24 +75,28 @@ class RsvpResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('invoice')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('rsvp_date')
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('member.username')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('outlet.name')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('pax')
+                Tables\Columns\TextColumn::make('pax_left')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('table_id')
-                    ->getStateUsing(function (Rsvp $record) {
-                        return $record->outlet_tables->floor . ' Floor - Table No:' . $record->outlet_tables->code ;
-                    })
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('table_price')
+                Tables\Columns\TextColumn::make('outlet_tables')
+                    ->getStateUsing(function (Rsvp $value) {
+                        $re = '<b>' . $value->outlet->name . '</b><br>';
+                        $json = json_decode($value->outlet_tables, true);
+                        foreach ($json as $key => $value) {
+                            $re .= '<li>' . $value['floor'] . " Floor | Table No. " . $value['table'] . " | Price : Rp. " . number_format($value['price']) . " | Max Pax : " . $value['max_pax'] . "</li>";
+                        }
+                        return $re;
+                    })->html(),
+                Tables\Columns\TextColumn::make('total')
                     ->numeric()
-                    ->sortable()->money('idr'),
-                Tables\Columns\TextColumn::make('subtotal')
-                    ->numeric()
-                    ->sortable()->money('idr'),
+                    ->sortable()->money('IDR'),
                 Tables\Columns\BadgeColumn::make('payment_status')->color(fn (string $state): string => match ($state) {
                     'unpaid' => 'danger',
                     'paid' => 'success',
@@ -107,6 +110,7 @@ class RsvpResource extends Resource
                     'cancelled' => 'grey',
                     'expired' => 'grey',
                     'issued' => 'primary',
+                    'waiting_payment' => 'warning',
                 })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')

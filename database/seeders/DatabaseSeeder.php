@@ -33,11 +33,20 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'type' => 'register',
-                'message' => 'Thanks for joining us, your account has been created!\n\n Email : {email}\n Username : {username}\n Password : {password}\n Please change your password after login',
+                'message' => 'Thanks for joining us, your account has been created!
+                            Email : {email}
+                            Username : {username}
+                            Password : {password}
+                            
+                            *Please change your password after login
+                            - Gozadera Indonesia',
             ],
             [
                 'type' => 'reset_password',
-                'message' => 'Your password has been reset, this is your new password\n\n Password : {password}\n Please change your password after login'
+                'message' => 'Your password has been reset!
+                 New Password : {password}
+                 
+                  - Gozadera Indonesia'
             ],
             [
                 'type' => 'welcome',
@@ -111,7 +120,22 @@ class DatabaseSeeder extends Seeder
             \App\Models\PointSetting::create($setting);
         }
 
-     \App\Models\Event::factory(20)->create();
+     \App\Models\Event::factory(50)->create();
+
+     \App\Models\Outlet::create([
+        'name' => 'GOZADERA',
+        'tagline' => 'Open Everyday - Sharing is Caring',
+        'address' => 'Jl. Embong Kenongo No.31-39, Embong Kaliasin, Kec. Genteng, Surabaya, Jawa Timur 60271',
+        'phone' => '082256978778',
+        'image' => 'https://static.wixstatic.com/media/4fb28b_2a90a6e5a9ea47b6946e2185d6fecd90~mv2.jpeg/v1/fill/w_640,h_380,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/4fb28b_2a90a6e5a9ea47b6946e2185d6fecd90~mv2.jpeg',
+        'area_image' => 'https://placehold.co/600x400?text=Hello+World',
+        'is_bar' => 1,
+        'is_karoke' => 1,
+        'private_room' =>  1,
+        'gmaps_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d989.4447098462365!2d112.74628216962333!3d-7.265991099546306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbc2fc4e7249%3A0x1ed2ba078562f007!2sGOZADERA%20INDONESIA!5e0!3m2!1sid!2sid!4v1715838675187!5m2!1sid!2sid',
+        'active' => 1
+        ]);
+
 
     }
 }

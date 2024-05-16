@@ -9,6 +9,12 @@ class Gallery extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'event_id',
+        'image',
+        'captions'
+    ];
+
     public function event()
     {
         return $this->belongsTo(Event::class);

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('rsvp_date')->default(now());
             $table->enum('payment_status',['unpaid' , 'paid','canceled','expired']);
             $table->string('payment_method');
-            $table->enum('status' , ['check_in' , 'check_out' , 'canceled' , 'expired' , 'issued'])->default('issued');
+            $table->enum('status' , ['check_in' , 'check_out' , 'canceled' , 'expired' , 'issued' , 'waiting_payment'])->default('issued');
             $table->integer('pax_left')->default(0);
 
             $table->timestamps();

@@ -34,7 +34,7 @@ class RSVPController extends Controller
 
             $totalPax += $value['max_pax'];
         }
-
+        $newDate = date("Y-m-d H:i:s", strtotime($request->rsvp_date));
         $rsvpGroup = new Rsvp();
         $rsvpGroup->invoice = $invoice;
         $rsvpGroup->member_id = $member_id;
@@ -42,11 +42,11 @@ class RSVPController extends Controller
         $rsvpGroup->outlet_tables = json_encode($data);
         $rsvpGroup->total = $total;
         $rsvpGroup->subtotal = $total;
-        $rsvpGroup->status = 'issued';
-        $rsvpGroup->payment_method = 'BCA';
+        $rsvpGroup->status = 'waiting_payment';
+        $rsvpGroup->payment_method = $request->payment_method;
         $rsvpGroup->payment_status = 'unpaid';
         $rsvpGroup->pax_left = $totalPax;
-        $rsvpGroup->rsvp_date = $request->rsvp_date;
+        $rsvpGroup->rsvp_date = $newDate;
         $rsvpGroup->save();
 
         return response()->json([
@@ -60,7 +60,7 @@ class RSVPController extends Controller
     public function myTicket(): JsonResponse
     {
         $member = auth()->user();
-        $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->get();
+        $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->with('payments')->get();
         return response()->json([
             'code' => 200,
             'status' => 'success',

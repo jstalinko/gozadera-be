@@ -21,24 +21,28 @@ class LatestRsvps extends BaseWidget
                     ->limit(5)
             )
             ->columns([
+                Tables\Columns\TextColumn::make('invoice')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('rsvp_date')
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('member.username')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('outlet.name')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('pax')
+                Tables\Columns\TextColumn::make('pax_left')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('table_id')
-                    ->getStateUsing(function (Rsvp $record) {
-                        return $record->outlet_tables->floor . ' Floor - Table No:' . $record->outlet_tables->code ;
-                    })
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('table_price')
+                Tables\Columns\TextColumn::make('outlet_tables')
+                ->getStateUsing(function (Rsvp $value){ 
+                    $re = '<b>'.$value->outlet->name.'</b><br>';
+                     $json = json_decode($value->outlet_tables, true);
+                     foreach($json as $key => $value){
+                         $re .= '<li>'.$value['floor']." Floor | Table No. ".$value['table']." | Price : Rp. ".number_format($value['price'])." | Max Pax : ".$value['max_pax']."</li>";
+                     }
+                     return $re;
+                })->html(),
+                Tables\Columns\TextColumn::make('total')
                     ->numeric()
-                    ->sortable()->money('idr'),
-                Tables\Columns\TextColumn::make('subtotal')
-                    ->numeric()
-                    ->sortable()->money('idr'),
+                    ->sortable()->money('IDR'),
                 Tables\Columns\BadgeColumn::make('payment_status')->color(fn (string $state): string => match ($state) {
                     'unpaid' => 'danger',
                     'paid' => 'success',
@@ -52,6 +56,7 @@ class LatestRsvps extends BaseWidget
                     'cancelled' => 'grey',
                     'expired' => 'grey',
                     'issued' => 'primary',
+                    'waiting_payment' => 'warning',
                 })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
