@@ -33,20 +33,25 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'type' => 'register',
-                'message' => 'Thanks for joining us, your account has been created!
-                            Email : {email}
-                            Username : {username}
-                            Password : {password}
+                'message' => '
+Thanks for joining us, your account has been created!
+Email : {email}
+Username : {username}
+Password : {password}
                             
-                            *Please change your password after login
-                            - Gozadera Indonesia',
+*Please change your password after login
+
+- Gozadera Indonesia',
             ],
             [
                 'type' => 'reset_password',
-                'message' => 'Your password has been reset!
-                 New Password : {password}
+                'message' => '
+Your password has been reset!
+
+
+New Password : {password}
                  
-                  - Gozadera Indonesia'
+- Gozadera Indonesia'
             ],
             [
                 'type' => 'welcome',

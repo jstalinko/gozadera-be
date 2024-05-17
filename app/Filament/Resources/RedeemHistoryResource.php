@@ -7,6 +7,7 @@ use App\Filament\Resources\RedeemHistoryResource\RelationManagers;
 use App\Models\RedeemHistory;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Illuminate\Database\Eloquent\Collection;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -45,16 +46,15 @@ class RedeemHistoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('member_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('member.username')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('redeem_point_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('product.name')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('product_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\BadgeColumn::make('status')->color(fn ($record) => match ($record->status) {
+                    'approved' => 'success',
+                    'rejected' => 'danger',
+                    default => 'primary',
+                }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -68,12 +68,28 @@ class RedeemHistoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\ViewAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('mark-as-approved')
+                        ->action(function (Collection $records) {
+                            $records->each->update(['status' => 'approved']);
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->color('success')
+                        ->icon('heroicon-o-check-circle'),
+
+                    Tables\Actions\BulkAction::make('mark-as-rejected')
+                        ->action(function (Collection $records) {
+                            $records->each->update(['status' => 'rejected']);
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->color('danger')
+                        ->icon('heroicon-o-x-circle'),
+
                 ]),
             ]);
     }

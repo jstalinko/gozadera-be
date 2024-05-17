@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Rsvp;
 use App\Helper\Helper;
 use App\Models\Member;
 use App\Models\RsvpGroup;
 use App\Models\OutletTable;
+use App\Models\Transaction;
+use App\Models\PointSetting;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\Rsvp;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -29,7 +31,10 @@ class RSVPController extends Controller
             $total += $value['price'];
             //update outlet table
             $outletTable = OutletTable::find($value['id']);
-            $outletTable->status = 'on_hold';
+            // push booked_date to outlet table
+            $booked_date = json_decode($outletTable->booked_date, true);
+            $booked_date[] = $request->rsvp_date;
+            $outletTable->booked_date = json_encode($booked_date); 
             $outletTable->save();
 
             $totalPax += $value['max_pax'];
@@ -49,6 +54,14 @@ class RSVPController extends Controller
         $rsvpGroup->rsvp_date = $newDate;
         $rsvpGroup->save();
 
+        // get point
+        // $member = Member::find($member_id);
+        // $pointSetting = PointSetting::getPoint($total);
+        // $member->point += $pointSetting;
+        // $member->save();
+
+        
+        
         return response()->json([
             'code' => 200,
             'status' => 'success',
@@ -60,7 +73,7 @@ class RSVPController extends Controller
     public function myTicket(): JsonResponse
     {
         $member = auth()->user();
-        $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->with('payments')->get();
+        $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->with('payments')->with('proofTransfer')->get();
         return response()->json([
             'code' => 200,
             'status' => 'success',

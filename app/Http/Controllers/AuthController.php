@@ -80,7 +80,7 @@ class AuthController extends Controller
         if ($member) {
             $member->password = Hash::make($newPassword);
             $member->save();
-            $notifWa = WaNotif::where('type', 'forgot_password')->first();
+            $notifWa = WaNotif::where('type', 'reset_password')->first();
             $message = Helper::replacer($notifWa->message, ['password' => $newPassword , 'email' => $member->email , 'username' => $member->username , 'name' => $member->username]);
             $response = Helper::sendWhatsappMessage($request->phone,$message);
 

@@ -19,6 +19,7 @@ use App\Filament\Resources\OrderResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use Filament\Forms\Components\Toggle;
+use Illuminate\Database\Eloquent\Collection;
 
 class OrderResource extends Resource
 {
@@ -60,6 +61,10 @@ class OrderResource extends Resource
 {
         return $table
             ->columns([
+                Tables\Columns\BadgeColumn::make('status')->colors([
+                    'process' => 'blue',
+                    'delivered' => 'green',
+                ]),
                 Tables\Columns\TextColumn::make('outlet.name'),
                 Tables\Columns\TextColumn::make('outlet_table')->getStateUsing(function (Order $record) {
                     return $record->outlet_table->floor . ' Floor | Table No : '.  $record->outlet_table->code;
@@ -77,19 +82,24 @@ class OrderResource extends Resource
                     $html.= '';
                     return $html;
                 })->html()->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('subtotal')->money('idr')
-
+                Tables\Columns\TextColumn::make('subtotal')->money('idr'),
+    
             ])->searchable()
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\Action::make('mark-as-delivered')
+                        ->label('Mark as Delivered')
+                        ->action(fn (Collection $record) => $record->each->update(['status' => 'delivered']))
+                        ->deselectRecordsAfterCompletion()
+                        ->color('success')
+                        ->icon('heroicon-o-check-circle'),
                 ]),
             ]);
     }

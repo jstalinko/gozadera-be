@@ -73,7 +73,11 @@ class EventResource extends Resource
                 Tables\Columns\TextColumn::make('end_date')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')->color(fn ($record) => match ($record->status) {
+                    'active' => 'success',
+                    'inactive' => 'danger',
+                    default => 'primary',
+                }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

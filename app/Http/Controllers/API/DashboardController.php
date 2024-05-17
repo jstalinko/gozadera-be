@@ -13,7 +13,10 @@ use App\Models\RedeemHistory;
 use App\Models\PaymentSetting;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\ProofTransfer;
+use App\Models\Rsvp;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -152,5 +155,40 @@ class DashboardController extends Controller
         $data['data'] = $member;
         $data['message'] = 'Get profile success';
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function uploadReceipt(Request $request): JsonResponse
+    {
+        $member = Member::find(auth()->user()->id);
+        $fileImage = $request->file('image');
+        $uploadPath = 'receipt';
+
+
+
+        $allowedExt = ['jpg', 'jpeg', 'png', 'pdf' , 'gif','HEIC','heic','IMG','img'];
+        $ext = $fileImage->getClientOriginalExtension();
+        if (!in_array($ext, $allowedExt)) {
+            $data['code'] = 400;
+            $data['status'] = 'error';
+            $data['message'] = 'File type not allowed';
+            return response()->json($data, 400, [], JSON_PRETTY_PRINT);
+        }
+
+        $uploaded = $fileImage->store($uploadPath, 'public');
+
+        $Proof = new ProofTransfer();
+        $Proof->member_id = $member->id;
+        $Proof->image = Storage::disk('public')->url($uploaded);
+        $Proof->rsvp_id = $request->rsvp_id;
+        $Proof->note = $request->note;
+        $Proof->save();
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['message'] = 'Upload receipt success';
+        $data['filename'] = basename($uploaded);
+        $data['img_url'] = Storage::disk('public')->url($uploaded);
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+
     }
 }

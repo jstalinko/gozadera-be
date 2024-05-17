@@ -70,12 +70,7 @@ class OutletTableResource extends Resource
              Tables\Columns\TextColumn::make('floor')->label('LT')->description('Lantai'),
              Tables\Columns\TextColumn::make('max_pax')->label('Max Pax')->description(' Person')->sortable(),
              Tables\Columns\TextColumn::make('code')->label('Table No.'),
-             Tables\Columns\TextColumn::make('price')->label('Price')->money('idr'),
-             Tables\Columns\BadgeColumn::make('status')->label('Status')->color(fn (string $state): string => match ($state) {
-                'available' => 'success',
-                'booked' => 'danger',
-                'on_hold' => 'grey',
-            })
+             Tables\Columns\TextColumn::make('price')->label('Price')->money('idr')
              ->sortable()
                 
             ])

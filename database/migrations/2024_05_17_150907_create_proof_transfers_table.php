@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('proof_transfers', function (Blueprint $table) {
             $table->id();
-            $table->integer('outlet_id');
-            $table->integer('table_id');
-            $table->integer('member_id')->default(null);
-            $table->json('items');
-            $table->integer('subtotal');
-            $table->enum('status' , ['process' , 'delivered'])->default('process');
+            $table->integer('member_id');
+            $table->integer('rsvp_id')->nullable();
+            $table->integer('order_id')->nullable();
+            $table->string('image');
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('proof_transfers');
     }
 };

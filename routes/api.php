@@ -51,6 +51,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/gallery/{event_id}' , [App\Http\Controllers\API\EventController::class , 'gallery']);
 
+    Route::post('/upload-receipt' , [App\Http\Controllers\API\DashboardController::class , 'uploadReceipt']);
 });
 Route::get('/product/{id}', [App\Http\Controllers\API\ProductController::class, 'view']);
 

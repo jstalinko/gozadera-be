@@ -6,15 +6,15 @@ use Filament\Forms;
 use App\Models\Rsvp;
 use Filament\Tables;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\OutletTable;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\RsvpResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\RsvpResource\RelationManagers;
-use App\Models\OutletTable;
-use Filament\Forms\Set;
+
 
 class RsvpResource extends Resource
 {
@@ -109,7 +109,7 @@ class RsvpResource extends Resource
                     'check_out' => 'danger',
                     'cancelled' => 'grey',
                     'expired' => 'grey',
-                    'issued' => 'primary',
+                    'issued' => 'info',
                     'waiting_payment' => 'warning',
                 })
                     ->sortable(),
@@ -132,6 +132,18 @@ class RsvpResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('Mark as Paid')
+                        ->action(function(Collection $records) {
+                            $records->each(function (Rsvp $record) {
+                                $record->update([
+                                    'payment_status' => 'paid',
+                                    'status' => 'issued',
+                                ]);
+                            });
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->color('success')
+                        ->icon('heroicon-o-check-circle'),
                 ]),
             ])->searchable();
     }

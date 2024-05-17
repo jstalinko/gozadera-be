@@ -33,4 +33,8 @@ class Rsvp extends Model
     {
         return $this->hasMany(PaymentSetting::class , 'type' , 'payment_method');
     }
+
+    public function proofTransfer(){
+        return $this->hasOne(ProofTransfer::class , 'rsvp_id' , 'id');
+    }
 }

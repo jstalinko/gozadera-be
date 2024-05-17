@@ -19,8 +19,8 @@ return new class extends Migration
             $table->integer('max_pax')->default(4);
             $table->integer('price');
             $table->string('image');
-            $table->enum('status' , ['available' , 'booked' , 'on_hold']);
             $table->longText('qrcode');
+            $table->json('booked_date')->nullable();
             $table->timestamps();
         });
     }
