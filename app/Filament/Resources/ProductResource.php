@@ -42,9 +42,15 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('stock')
                     ->required()
                     ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('category')
-                    ->required(),
+                    ->default(10),
+                Forms\Components\Select::make('category')
+                    ->required()
+                    ->options([
+                        'food' => 'Food',
+                        'beverages' => 'Beverages',
+                        'alcohol' => 'Alcohol',
+                        'redeemable' => 'Redeemable Product'
+                    ]),
             ]);
     }
 
