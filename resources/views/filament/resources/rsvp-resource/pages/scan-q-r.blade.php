@@ -2,6 +2,7 @@
 
     <video id="previewKamera" style="width:100%;height:autoo;"></video>
     <br>
+    <p>Please wait 10 seconds after scanning</p>
     <div id="alert"></div>
     <div id="results">
 
