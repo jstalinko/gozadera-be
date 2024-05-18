@@ -14,7 +14,8 @@ class Order extends Model
         'member_id',
         'table_id',
         'items',
-        'subtotal'
+        'subtotal',
+        'status'
     ];
 
     public function outlet(): BelongsTo

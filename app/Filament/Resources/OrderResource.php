@@ -6,20 +6,23 @@ use Closure;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Order;
+use App\Models\Member;
 use App\Models\Product;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Support\RawJs;
+use App\Models\PointSetting;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\OrderResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\OrderResource\RelationManagers;
-use Filament\Forms\Components\Toggle;
-use Illuminate\Database\Eloquent\Collection;
+use Filament\Notifications\Notification;
 
 class OrderResource extends Resource
 {
@@ -61,10 +64,12 @@ class OrderResource extends Resource
 {
         return $table
             ->columns([
-                Tables\Columns\BadgeColumn::make('status')->colors([
-                    'process' => 'blue',
-                    'delivered' => 'green',
-                ]),
+                Tables\Columns\TextColumn::make('id')->sortable()->label('ORDER ID'),
+                Tables\Columns\BadgeColumn::make('status')->color(fn (Order $record) => match ($record->status) {
+                    'process' => 'warning',
+                    'delivered' => 'success',
+                    default => 'primary',
+                }),
                 Tables\Columns\TextColumn::make('outlet.name'),
                 Tables\Columns\TextColumn::make('outlet_table')->getStateUsing(function (Order $record) {
                     return $record->outlet_table->floor . ' Floor | Table No : '.  $record->outlet_table->code;
@@ -94,12 +99,30 @@ class OrderResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\Action::make('mark-as-delivered')
-                        ->label('Mark as Delivered')
-                        ->action(fn (Collection $record) => $record->each->update(['status' => 'delivered']))
-                        ->deselectRecordsAfterCompletion()
-                        ->color('success')
-                        ->icon('heroicon-o-check-circle'),
+                    Tables\Actions\BulkAction::make('mark-as-delivered')
+                    ->action(function(Collection $records) {
+                        $records->each(function (Order $record) {
+                            $record->update([
+                                'status' => 'delivered',
+                            ]);
+
+                            $member = Member::find($record->member_id);
+                            $pointSetting = PointSetting::getPoint($record->subtotal);
+                            $member->point += $pointSetting;
+                            $member->save();
+
+                            Notification::make()
+                                ->title('Order Delivered')
+                                ->success()
+                                ->body('Order ID: ' . $record->id . ' has been delivered')
+                                ->send();
+                        
+                        });
+                      
+                    })
+                    ->deselectRecordsAfterCompletion()
+                    ->color('success')
+                    ->icon('heroicon-o-check-circle'),
                 ]),
             ]);
     }

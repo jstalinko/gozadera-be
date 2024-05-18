@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\OutletTable;
 use Filament\Resources\Resource;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\RsvpResource\Pages;
@@ -139,6 +140,12 @@ class RsvpResource extends Resource
                                     'payment_status' => 'paid',
                                     'status' => 'issued',
                                 ]);
+
+
+                            Notification::make()
+                            ->title('#'.$record->invoice . ' has been paid')
+                            ->success()
+                            ->send();
                             });
                         })
                         ->deselectRecordsAfterCompletion()

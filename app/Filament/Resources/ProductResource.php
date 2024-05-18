@@ -7,10 +7,12 @@ use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProductResource extends Resource
@@ -50,12 +52,14 @@ class ProductResource extends Resource
                         'beverages' => 'Beverages',
                         'alcohol' => 'Alcohol',
                         'redeemable' => 'Redeemable Product'
-                    ]),
+                    ])->native(false),
             ]);
     }
 
     public static function table(Table $table): Table
     {
+       
+        
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
@@ -88,12 +92,64 @@ class ProductResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('Bulk Add Products')
+                    ->icon('heroicon-o-plus')
+                    ->form([
+                        Forms\Components\Select::make('category')
+                            ->required()
+                            ->options([
+                                'food' => 'Food',
+                                'beverages' => 'Beverages',
+                                'alcohol' => 'Alcohol',
+                                'redeemable' => 'Redeemable Product'
+                            ])
+                            ->native(false),
+                        Forms\Components\FileUpload::make('images')
+                            ->label('Image Files')
+                            ->multiple()
+                            ->required()
+                            ->helperText('Image filaname format must be "[product_name]_[product_price].jpg" example : "nasi-goreng_15000.jpg"')
+                            ->preserveFilenames(),
+                    ])->action(function(array $data): void {
+                        $images = $data['images'];
+                        $category = $data['category'];
+                        foreach ($images as $image) {
+                            $price = explode('_', $image)[1];
+                            $ext = explode('.', $price)[1];
+                            $price = explode('.', $price)[0];
+                            $price = (int) $price;
+                            $product = explode('_', $image)[0];
+                            $product = str_replace('-', ' ', $product);
+                            $product = strtoupper($product);
+                            // change image filename
+                            $newFileName = sha1($product) . '.'.$ext;
+                            @rename(public_path('storage/'.$image), public_path('storage/'.$newFileName ));
+
+                            $productModal = new Product();
+                            $productModal->name = $product;
+                            $productModal->description = $product;
+                            $productModal->price = $price;
+                            $productModal->image = $newFileName;
+                            $productModal->stock = 100;
+                            $productModal->category = $category;
+                            $productModal->save();
+                            Notification::make()
+                                ->title('Product Added')
+                                ->body('Product ' . $product . ' has been added')
+                                ->send();
+                        
+                        }
+                      
+                        
+                    })
             ]);
     }
 
@@ -103,7 +159,8 @@ class ProductResource extends Resource
             //
         ];
     }
-
+    
+   
     public static function getPages(): array
     {
         return [
