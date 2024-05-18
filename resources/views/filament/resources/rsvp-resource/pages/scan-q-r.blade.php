@@ -2,11 +2,13 @@
 
     <video id="previewKamera" style="width:100%;height:autoo;"></video>
     <br>
+    <div id="alert"></div>
+    <div id="results">
+
     <select id="pilihKamera" style="width:100%;color:white;background:black;border:1px solid #fff;border-radius:4px;">
     </select>
     <br>
-    <div id="alert"></div>
-    <div id="results">
+   
     </div>
 
     @push('styles')
@@ -107,7 +109,10 @@
  
 
                                     if (codeReader) {
-                                        codeReader.reset()
+                                        codeReader.reset();
+                                        setTimeout(() => {
+                                            window.location.reload();
+                                        }, 10000);
                                     
                                     }
                                 })
