@@ -122,6 +122,13 @@ class ProductResource extends Resource
                         $images = $data['images'];
                         $category = $data['category'];
                         foreach ($images as $image) {
+
+                            if(!str_contains($image, '_'))
+                            {
+                                $price = rand(100000,900000);
+                                $product = explode('.', $image)[0];
+
+                            }else{
                             $price = explode('_', $image)[1];
                             $ext = explode('.', $price)[1];
                             $price = explode('.', $price)[0];
@@ -129,6 +136,7 @@ class ProductResource extends Resource
                             $product = explode('_', $image)[0];
                             $product = str_replace('-', ' ', $product);
                             $product = strtoupper($product);
+                            }
                             // change image filename
                             $newFileName = sha1($product) . '.'.$ext;
                             @rename(public_path('storage/'.$image), public_path('storage/'.$newFileName ));
@@ -144,6 +152,7 @@ class ProductResource extends Resource
                             Notification::make()
                                 ->title('Product Added')
                                 ->body('Product ' . $product . ' has been added')
+                                ->success()
                                 ->send();
                         
                         }
