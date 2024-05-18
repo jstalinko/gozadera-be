@@ -127,6 +127,8 @@ class ProductResource extends Resource
                             {
                                 $price = rand(100000,900000);
                                 $product = explode('.', $image)[0];
+                                $ext = explode('.', $image)[1];
+                                $product = str_replace('-', ' ', $product);
 
                             }else{
                             $price = explode('_', $image)[1];
