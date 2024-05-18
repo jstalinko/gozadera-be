@@ -37,7 +37,7 @@ class OrderResource extends Resource
         $product = Product::all();
         $p = [];
         foreach ($product as $ps) {
-            $p[$ps->id.'|'.$ps->name . '|' . $ps->price] = '(' . $ps->category . ') ' . $ps->name . ' - IDR ' . number_format($ps->price);
+            $p[$ps->id . '|' . $ps->name . '|' . $ps->price] = '(' . $ps->category . ') ' . $ps->name . ' - IDR ' . number_format($ps->price);
         }
 
         return $form
@@ -60,8 +60,14 @@ class OrderResource extends Resource
             ]);
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+
     public static function table(Table $table): Table
-{
+    {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable()->label('ORDER ID'),
@@ -72,23 +78,23 @@ class OrderResource extends Resource
                 }),
                 Tables\Columns\TextColumn::make('outlet.name'),
                 Tables\Columns\TextColumn::make('outlet_table')->getStateUsing(function (Order $record) {
-                    return $record->outlet_table->floor . ' Floor | Table No : '.  $record->outlet_table->code;
+                    return $record->outlet_table->floor . ' Floor | Table No : ' .  $record->outlet_table->code;
                 }),
                 Tables\Columns\TextColumn::make('member.username'),
                 Tables\Columns\TextColumn::make('items')->getStateUsing(function (Order $record) {
                     $items = json_decode($record->items);
                     $html  = '';
-                    foreach($items as $item) {
+                    foreach ($items as $item) {
                         $price = number_format($item->price);
                         $name = $item->name;
                         $qty = $item->qty;
-                        $html.= '<li>(x'.$qty.') ' . $name . ' -  @' . $price . '</li>';
+                        $html .= '<li>(x' . $qty . ') ' . $name . ' -  @' . $price . '</li>';
                     }
-                    $html.= '';
+                    $html .= '';
                     return $html;
                 })->html()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('subtotal')->money('idr'),
-    
+
             ])->searchable()
             ->filters([
                 //
@@ -100,29 +106,27 @@ class OrderResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('mark-as-delivered')
-                    ->action(function(Collection $records) {
-                        $records->each(function (Order $record) {
-                            $record->update([
-                                'status' => 'delivered',
-                            ]);
+                        ->action(function (Collection $records) {
+                            $records->each(function (Order $record) {
+                                $record->update([
+                                    'status' => 'delivered',
+                                ]);
 
-                            $member = Member::find($record->member_id);
-                            $pointSetting = PointSetting::getPoint($record->subtotal);
-                            $member->point += $pointSetting;
-                            $member->save();
+                                $member = Member::find($record->member_id);
+                                $pointSetting = PointSetting::getPoint($record->subtotal);
+                                $member->point += $pointSetting;
+                                $member->save();
 
-                            Notification::make()
-                                ->title('Order Delivered')
-                                ->success()
-                                ->body('Order ID: ' . $record->id . ' has been delivered')
-                                ->send();
-                        
-                        });
-                      
-                    })
-                    ->deselectRecordsAfterCompletion()
-                    ->color('success')
-                    ->icon('heroicon-o-check-circle'),
+                                Notification::make()
+                                    ->title('Order Delivered')
+                                    ->success()
+                                    ->body('Order ID: ' . $record->id . ' has been delivered')
+                                    ->send();
+                            });
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->color('success')
+                        ->icon('heroicon-o-check-circle'),
                 ]),
             ]);
     }

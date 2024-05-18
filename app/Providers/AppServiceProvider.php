@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationItem;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,5 +30,16 @@ class AppServiceProvider extends ServiceProvider
             'Settings',
             'User Management',
         ]);
+
+        Filament::serving(function () {
+            Filament::registerNavigationItems([
+                NavigationItem::make('Scan QR')
+                    ->url('/admin/rsvps/scanqr', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-qr-code')
+                    ->activeIcon('heroicon-s-qr-code')
+                    ->group('Rsvp & Item orders')
+                    ->sort(3),
+            ]);
+        });
     }
 }

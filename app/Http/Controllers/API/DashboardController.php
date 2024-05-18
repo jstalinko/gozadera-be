@@ -125,20 +125,19 @@ class DashboardController extends Controller
     {
         $type = $request->type;
         $paymentSetting = PaymentSetting::where('type', $type)->get();
-        
+
         $data['code'] = 200;
         $data['status'] = 'success';
         $data['data'] = $paymentSetting;
         $data['message'] = 'Get payment setting success';
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-
     }
 
     public function redeemHistory(): JsonResponse
     {
         $redeem = RedeemHistory::where('member_id', auth()->user()->id)->with('product')->with('redeem_point')->get();
-        
+
         $data['code'] = 200;
         $data['status'] = 'success';
         $data['data'] = $redeem;
@@ -165,7 +164,7 @@ class DashboardController extends Controller
 
 
 
-        $allowedExt = ['jpg', 'jpeg', 'png', 'pdf' , 'gif','HEIC','heic','IMG','img'];
+        $allowedExt = ['jpg', 'jpeg', 'png', 'pdf', 'gif', 'HEIC', 'heic', 'IMG', 'img'];
         $ext = $fileImage->getClientOriginalExtension();
         if (!in_array($ext, $allowedExt)) {
             $data['code'] = 400;
@@ -189,6 +188,37 @@ class DashboardController extends Controller
         $data['img_url'] = Storage::disk('public')->url($uploaded);
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    }
 
+    public function scanQr(Request $request): JsonResponse
+    {
+        $code = $request->code;
+        $member = Member::find($code);
+        $rsvp = Rsvp::where('member_id', $member->id)->where('payment_status', 'paid')->first();
+        if ($rsvp) {
+            if ($rsvp->pax_left < 1) {
+                $data['code'] = 400;
+                $data['status'] = 'error';
+                $data['message'] = 'No pax left';
+                $data['member'] = $member;
+                return response()->json($data, 400, [], JSON_PRETTY_PRINT);
+            } else {
+                $rsvp->status = 'check_in';
+                $rsvp->pax_left =  $rsvp->pax_left - 1;
+                $rsvp->save();
+                $data['code'] = 200;
+                $data['status'] = 'success';
+                $data['message'] = 'Check in success';
+                $data['member'] = $member;
+                $data['rsvp'] = $rsvp;
+                return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+            }
+        } else {
+            $data['code'] = 400;
+            $data['status'] = 'error';
+            $data['message'] = 'No RSVP found or payment not paid';
+            $data['member'] = $member;
+            return response()->json($data, 400, [], JSON_PRETTY_PRINT);
+        }
     }
 }

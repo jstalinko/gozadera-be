@@ -55,8 +55,15 @@ class AuthController extends Controller
         $member->address = 'not set';
         $member->point = 0;
         $member->status = 'active';
-        $member->qrcode = $qr->render(base64_encode($member->id));
         $member->save();
+        
+        $updateMember = Member::find($member->id);
+        $updateMember->qrcode = $qr->render(base64_encode($member->id));
+        $updateMember->save();
+
+        
+
+        
 
         /** request whatsapp api */
         $notifWa = WaNotif::where('type', 'register')->first();

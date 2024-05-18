@@ -55,7 +55,12 @@ class ProductResource extends Resource
                     ])->native(false),
             ]);
     }
-
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+    
+    
     public static function table(Table $table): Table
     {
        

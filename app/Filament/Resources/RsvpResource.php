@@ -71,7 +71,12 @@ class RsvpResource extends Resource
                     ->required()->native(false),
             ]);
     }
-
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+    
+    
     public static function table(Table $table): Table
     {
         return $table
@@ -152,7 +157,15 @@ class RsvpResource extends Resource
                         ->color('success')
                         ->icon('heroicon-o-check-circle'),
                 ]),
-            ])->searchable();
+            ])->searchable()
+            ->headerActions(
+                [
+                    Tables\Actions\Action::make('scan-Qr')
+                        ->icon('heroicon-o-qr-code')
+                        ->url(self::getUrl('scanqr')),
+                ]
+            );
+            
     }
 
     public static function getRelations(): array
@@ -167,6 +180,7 @@ class RsvpResource extends Resource
         return [
             'index' => Pages\ListRsvps::route('/'),
             'create' => Pages\CreateRsvp::route('/create'),
+            'scanqr' => Pages\ScanQR::route('/scanqr'),
             'view' => Pages\ViewRsvp::route('/{record}'),
             'edit' => Pages\EditRsvp::route('/{record}/edit'),
         ];
