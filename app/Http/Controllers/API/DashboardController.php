@@ -35,7 +35,7 @@ class DashboardController extends Controller
     public function top10spender(): JsonResponse
     {
         // count total order by member
-        $top10spender = Order::select('member_id', DB::raw('SUM(subtotal) as total_payment'))
+        $top10spender = Order::select('member_id', \DB::raw('SUM(subtotal) as total_payment'))
             ->groupBy('member_id')
             ->orderBy('total_payment', 'desc')
             ->limit(10)
@@ -48,9 +48,14 @@ class DashboardController extends Controller
         }
 
 
+        if(count($top10spender) < 1){
+            $data = [];
+        }else{
+            $data = $top10spender;
+        }
         $data['code'] = 200;
         $data['status'] = 'success';
-        $data['data'] = $top10spender;
+        $data['data'] = $data;
         $data['message'] = 'Get top 10 spender success';
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
