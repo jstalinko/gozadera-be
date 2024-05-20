@@ -92,8 +92,8 @@
                                     console.log(result.text)
                                     var alert = $('#alert');    
                                     var results = $('#results');
-                                    var memberId = atob(result.text);
-                                    fetch('/api/scanqr/'+memberId)
+                                    var invoice = result.text;
+                                    fetch('/api/scanqr-rsvp/'+invoice)
                                         .then(response => response.json())
                                         .then(data => {
                                             console.log(data)

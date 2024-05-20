@@ -49,13 +49,13 @@ class DashboardController extends Controller
 
 
         if(count($top10spender) < 1){
-            $data = [];
+            $datax = [];
         }else{
-            $data = $top10spender;
+            $datax = $top10spender;
         }
         $data['code'] = 200;
         $data['status'] = 'success';
-        $data['data'] = $data;
+        $data['data'] = $datax;
         $data['message'] = 'Get top 10 spender success';
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);

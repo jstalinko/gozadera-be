@@ -34,7 +34,16 @@ class BannerResource extends Resource
             ->schema([
                 TextInput::make('title')->required()->minLength(4),
                 TextInput::make('description')->required()->minLength(10),
-                TextInput::make('link')->default('#'),
+                Forms\Components\Select::make('link')->options(function(\App\Models\Event $event){
+                    $es= $event->where('type','event')->get();
+                    $events = [];
+                    foreach($es as $e){
+                        $events['/rsvp/'.$e->outlet_id.'?startDate='.$e->start_date.'&endDate='.$e->end_date] = $e->name;
+                    }
+                    return $events;
+                
+                
+                })->native(false),
                 FileUpload::make('image')->required()
                 // acceptedFileType gif
                 ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif'])

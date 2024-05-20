@@ -34,7 +34,7 @@ class RSVPController extends Controller
             // push booked_date to outlet table
             $booked_date = json_decode($outletTable->booked_date, true);
             $booked_date[] = $request->rsvp_date;
-            $outletTable->booked_date = json_encode($booked_date); 
+            $outletTable->booked_date = json_encode($booked_date);
             $outletTable->save();
 
             $totalPax += $value['max_pax'];
@@ -60,8 +60,8 @@ class RSVPController extends Controller
         // $member->point += $pointSetting;
         // $member->save();
 
-        
-        
+
+
         return response()->json([
             'code' => 200,
             'status' => 'success',
@@ -80,5 +80,28 @@ class RSVPController extends Controller
             'message' => 'My Ticket',
             'data' => $rsvp
         ]);
+    }
+
+    public function scanQrRsvp(Request $request): JsonResponse
+    {
+        $invoice = $request->invoice;
+        $rsvp = Rsvp::where('invoice', $invoice)->first();
+        if ($rsvp) {
+            if ($rsvp->payment_status == 'paid') {
+                $data['code'] = 200;
+                $data['status'] = 'success';
+                $data['message'] = 'This rsvp is paid and verified';
+                return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+            
+            } else {
+                $data['status'] = 'error';
+                $data['message'] = 'This rsvp is not paid yet or not verified';
+                return response()->json($data, 400, [], JSON_PRETTY_PRINT);
+            }
+        } else {
+            $data['status'] = 'error';
+            $data['message'] = 'Invoice not found';
+            return response()->json($data, 400, [], JSON_PRETTY_PRINT);
+        }
     }
 }

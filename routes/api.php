@@ -62,3 +62,4 @@ Route::get('/product-redeemables', [App\Http\Controllers\API\ProductController::
 Route::get('/get-payments/{type}', [App\Http\Controllers\API\DashboardController::class, 'getPayments']);
 
 Route::get('/scanqr/{code}', [App\Http\Controllers\API\DashboardController::class, 'scanQr']);
+Route::get('/scanqr-rsvp/{invoice}', [App\Http\Controllers\API\RSVPController::class, 'scanQrRsvp']);
