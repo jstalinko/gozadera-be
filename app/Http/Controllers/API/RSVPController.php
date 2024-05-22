@@ -88,9 +88,21 @@ class RSVPController extends Controller
         $rsvp = Rsvp::where('invoice', $invoice)->first();
         if ($rsvp) {
             if ($rsvp->payment_status == 'paid') {
+
+                if($rsvp->pax_lefet == 0 || $rsvp->pax_left < 1)
+                {
+                    $data['status'] = 'error';
+                    $data['message'] = 'Failed, Pax left is 0 !';
+                    return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+                
+                }
+                $rsvp->status = 'check_in';
+                $rsvp->pax_left = $rsvp->pax_left - 1;
+                $rsvp->save();
                 $data['code'] = 200;
                 $data['status'] = 'success';
-                $data['message'] = 'This rsvp is paid and verified';
+                $data['message'] = 'Success check-in ( Pax left : ' . $rsvp->pax_left . ' )';
+                $data['data'] = $rsvp;
                 return response()->json($data, 200, [], JSON_PRETTY_PRINT);
             
             } else {

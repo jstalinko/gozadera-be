@@ -3,18 +3,19 @@
 namespace App\Http\Controllers\API;
 
 use DB;
+use App\Models\Rsvp;
 use App\Models\Order;
 use App\Models\Banner;
 use App\Models\Member;
 use App\Models\BottleSaved;
 use App\Models\MemberLevel;
+use App\Models\PointSetting;
 use Illuminate\Http\Request;
+use App\Models\ProofTransfer;
 use App\Models\RedeemHistory;
 use App\Models\PaymentSetting;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Models\ProofTransfer;
-use App\Models\Rsvp;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -198,31 +199,24 @@ class DashboardController extends Controller
     public function scanQr(Request $request): JsonResponse
     {
         $code = $request->code;
+        $amount = $request->amount;
         $member = Member::find($code);
-        $rsvp = Rsvp::where('member_id', $member->id)->where('payment_status', 'paid')->first();
-        if ($rsvp) {
-            if ($rsvp->pax_left < 1) {
-                $data['code'] = 400;
-                $data['status'] = 'error';
-                $data['message'] = 'No pax left';
-                $data['member'] = $member;
-                return response()->json($data, 400, [], JSON_PRETTY_PRINT);
-            } else {
-                $rsvp->status = 'check_in';
-                $rsvp->pax_left =  $rsvp->pax_left - 1;
-                $rsvp->save();
-                $data['code'] = 200;
-                $data['status'] = 'success';
-                $data['message'] = 'Check in success';
-                $data['member'] = $member;
-                $data['rsvp'] = $rsvp;
-                return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-            }
-        } else {
+        $pointSetting = PointSetting::getPoint($amount);
+        if($member){
+            $member->point = $member->point + $pointSetting;
+            $member->save();
+            $data['code'] = 200;
+            $data['status'] = 'success';
+            $data['amount'] = $amount;
+            $data['message'] = $pointSetting.' points added to '.$member->username;
+            $data['data'] = $member;
+            return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+        
+
+        }else{
             $data['code'] = 400;
             $data['status'] = 'error';
-            $data['message'] = 'No RSVP found or payment not paid';
-            $data['member'] = $member;
+            $data['message'] = 'Member not found';
             return response()->json($data, 400, [], JSON_PRETTY_PRINT);
         }
     }
