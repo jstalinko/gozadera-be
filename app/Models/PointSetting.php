@@ -16,11 +16,12 @@ class PointSetting extends Model
 
     public static function getPoint($total){
         $pointSetting = PointSetting::all();
+        $return = 0;
         foreach($pointSetting as $point){
             if($total >= $point->minimum_spend){
-                return $point->point;
+                $return= $point->point;
             }
         }
-        return 0;
+        return $return;
     }
 }
