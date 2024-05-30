@@ -35,6 +35,15 @@ class RedeemPointResource extends Resource
                 Forms\Components\TextInput::make('stock')
                     ->required()
                     ->numeric(),
+                Forms\Components\Select::make('category')
+                    ->options([
+                        'food' => 'Food',
+                        'drink' => 'Drink',
+                        'lifestyle' => 'Lifestyle',
+                        'merchandise' => 'Merchandise',
+                        'other' => 'Other',
+                    ])
+                    ->required(),
                 Forms\Components\Toggle::make('active')
                     ->required(),
             ]);
@@ -50,6 +59,8 @@ class RedeemPointResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('stock')
                     ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('category')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('active')
                     ->boolean(),

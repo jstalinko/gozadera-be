@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('redeem_points', function (Blueprint $table) {
             $table->id();
             $table->integer('product_id')->comment('product id with category redeemable');
+            $table->string('category')->comment('category of redeemable product');
             $table->integer('point')->comment('point needed to redeem');
             $table->integer('stock')->comment('stock of redeemable product');
             $table->boolean('active')->default(true);

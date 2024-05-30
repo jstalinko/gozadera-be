@@ -53,6 +53,17 @@ class ProductResource extends Resource
                         'alcohol' => 'Alcohol',
                         'redeemable' => 'Redeemable Product'
                     ])->native(false),
+                Forms\Components\Select::make('sub_category')
+                ->required()
+                ->options([
+                    'starter' => 'Starter',
+                    'main_course' => 'Main Course',
+                    'rice_dish' => 'Rice Dish',
+                    'pasta_or_noodles' => 'Pasta or Noodles',
+                    'soup' => 'Soup',
+                    'salad' => 'Salad',
+                    'small_bites' => 'Small Bites'
+                ])->native(false),
             ]);
     }
     public static function getNavigationBadge(): ?string
@@ -77,6 +88,7 @@ class ProductResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category'),
+                Tables\Columns\TextColumn::make('sub_category'),
                 Tables\Columns\BadgeColumn::make('stock')
                     ->colors([
                         'danger' => fn ($record) => $record->stock <= 0,
@@ -117,6 +129,18 @@ class ProductResource extends Resource
                                 'redeemable' => 'Redeemable Product'
                             ])
                             ->native(false),
+                        Forms\Components\Select::make('sub_category')
+                            ->required()
+                            ->options([
+                                'starter' => 'Starter',
+                                'main_course' => 'Main Course',
+                                'rice_dish' => 'Rice Dish',
+                                'pasta_or_noodles' => 'Pasta or Noodles',
+                                'soup' => 'Soup',
+                                'salad' => 'Salad',
+                                'small_bites' => 'Small Bites'
+                            ])
+                            ->native(false),
                         Forms\Components\FileUpload::make('images')
                             ->label('Image Files')
                             ->multiple()
@@ -155,6 +179,7 @@ class ProductResource extends Resource
                             $productModal->image = $newFileName;
                             $productModal->stock = 100;
                             $productModal->category = $category;
+                            $productModal->sub_category = $data['sub_category'];
                             $productModal->save();
                             Notification::make()
                                 ->title('Product Added')

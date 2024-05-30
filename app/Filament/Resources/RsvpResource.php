@@ -31,44 +31,31 @@ class RsvpResource extends Resource
             ->schema([
                 Forms\Components\Select::make('member_id')
                     ->relationship('member', 'username')
-                    ->searchable()
-                    ->native(false)
+                    ->required()->native(false),
+               Forms\Components\TextInput::make('invoice')->readonly(),
+                Forms\Components\DatePicker::make('rsvp_date')
                     ->required(),
-                Forms\Components\Select::make('outlet_id')
-                    ->relationship('outlet', 'name')
-                    ->native(false)
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'check_in' => 'Check In',
+                        'check_out' => 'Check Out',
+                        'cancelled' => 'Cancelled',
+                        'expired' => 'Expired',
+                        'issued' => 'Issued',
+                        'waiting_payment' => 'Waiting Payment',
+                    ])
                     ->required()
-                    ->live(onBlur: true),
-                Forms\Components\Select::make('table_id')
-                    ->relationship('outlet_tables', 'code', function (Builder $query, Get $get) {
-                        $query->where('outlet_id', $get('outlet_id'));
-                        $query->where('status', 'available');
-                    })
-                    ->native(false)
-                    ->visible(fn (Get $get) => filled($get('outlet_id')))
-                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->floor . ' Floor - Table No:' . $record->code . ' - Max Pax:' . $record->max_pax)
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(function (Set $set, $state) {
-                        $set('pax', OutletTable::find($state)->max_pax);
-                        $set('table_price', number_format(OutletTable::find($state)->price));
-                        $set('subtotal', number_format(OutletTable::find($state)->price));
-                    }),
-
-                Forms\Components\TextInput::make('pax')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('table_price')
-                    ->required()
-                    ->disabled()->prefix('IDR'),
-                Forms\Components\TextInput::make('subtotal')
-                    ->required()
-                    ->disabled()->prefix('IDR'),
+                    ->native(false),
                 Forms\Components\Select::make('payment_status')
                     ->options([
                         'unpaid' => 'Unpaid',
                         'paid' => 'Paid',
+                        'expired' => 'Expired',
+                        'cancelled' => 'Cancelled',
                     ])
-                    ->required()->native(false),
+                    ->required()
+                    ->native(false),
+                Forms\Components\TextInput::make('pax_left')->required(),
             ]);
     }
     public static function getNavigationBadge(): ?string
@@ -157,14 +144,7 @@ class RsvpResource extends Resource
                         ->color('success')
                         ->icon('heroicon-o-check-circle'),
                 ]),
-            ])->searchable()
-            ->headerActions(
-                [
-                    Tables\Actions\Action::make('scan-Qr')
-                        ->icon('heroicon-o-qr-code')
-                        ->url(self::getUrl('scanqr')),
-                ]
-            );
+            ])->searchable();
             
     }
 
@@ -180,7 +160,6 @@ class RsvpResource extends Resource
         return [
             'index' => Pages\ListRsvps::route('/'),
             'create' => Pages\CreateRsvp::route('/create'),
-            'scanqr' => Pages\ScanQR::route('/scanqr'),
             'view' => Pages\ViewRsvp::route('/{record}'),
             'edit' => Pages\EditRsvp::route('/{record}/edit'),
         ];

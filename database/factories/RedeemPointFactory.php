@@ -20,6 +20,7 @@ class RedeemPointFactory extends Factory
             'product_id' => rand(1, 10),
             'point' => rand(1000, 10000),
             'stock' => rand(3, 10),
+            'category' => $this->faker->randomElement(['food', 'drink', 'lifestyle', 'merchandise', 'other']),
         ];
     }
 }

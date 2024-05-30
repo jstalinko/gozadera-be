@@ -33,7 +33,7 @@ class DashboardController extends Controller
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function top10spender(): JsonResponse
+    public function top10spender(Request $request): JsonResponse
     {
         // count total order by member
         $top10spender = Order::select('member_id', \DB::raw('SUM(subtotal) as total_payment'))
@@ -47,6 +47,8 @@ class DashboardController extends Controller
             $spender->username = $member->username;
             $spender->level = MemberLevel::seeLevel($spender->member_id);
         }
+
+        
 
 
         if(count($top10spender) < 1){
@@ -161,7 +163,37 @@ class DashboardController extends Controller
         $data['message'] = 'Get profile success';
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
+    public function uploadProfile(Request $request): JsonResponse
+    {
+        $member = Member::find(auth()->user()->id);
+        $fileImage = $request->file('image');
+        $uploadPath = 'profile';
 
+
+
+        $allowedExt = ['jpg', 'jpeg', 'png', 'gif', 'HEIC', 'heic', 'IMG', 'img'];
+        $ext = $fileImage->getClientOriginalExtension();
+        if (!in_array($ext, $allowedExt)) {
+            $data['code'] = 400;
+            $data['status'] = 'error';
+            $data['message'] = 'File type not allowed';
+            return response()->json($data, 400, [], JSON_PRETTY_PRINT);
+        }
+
+        $uploaded = $fileImage->store($uploadPath, 'public');
+
+        $member->image = Storage::disk('public')->url($uploaded);
+        $member->save();
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['message'] = 'Upload profile success';
+        $data['filename'] = basename($uploaded);
+        $data['img_url'] = Storage::disk('public')->url($uploaded);
+
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
+    
+        
+    }
     public function uploadReceipt(Request $request): JsonResponse
     {
         $member = Member::find(auth()->user()->id);
@@ -208,6 +240,7 @@ class DashboardController extends Controller
             $data['code'] = 200;
             $data['status'] = 'success';
             $data['amount'] = $amount;
+            $data['point']  = $pointSetting;
             $data['message'] = $pointSetting.' points added to '.$member->username;
             $data['data'] = $member;
             return response()->json($data, 200, [], JSON_PRETTY_PRINT);

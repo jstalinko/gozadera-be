@@ -18,6 +18,7 @@ class TransactionResource extends Resource
     protected static ?string $model = Transaction::class;
 
     protected static ?string $navigationIcon = 'fas-sync';
+    protected static bool $shouldRegisterNavigation = false;
 
    
 

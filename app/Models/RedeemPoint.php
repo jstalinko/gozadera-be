@@ -10,6 +10,7 @@ class RedeemPoint extends Model
     use HasFactory;
     protected $fillable = [
         'product_id',
+        'category',
         'point',
         'stock'
     ];

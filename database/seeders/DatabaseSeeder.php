@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
          \App\Models\Member::factory(100)->create();
         \App\Models\Product::factory(100)->create();
         \App\Models\OutletTable::factory(20)->create();
+        \App\Models\SplashScreen::factory(5)->create();
+        
 
     
 

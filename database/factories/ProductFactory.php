@@ -23,6 +23,7 @@ class ProductFactory extends Factory
             'stock' => rand(1,2000),
             'category' => fake()->randomElement(['food','beverages' ,'alcohol','other']),
             'image' => 'https://placehold.co/400x400?text=No+Image',
+            'sub_category' => fake()->randomElement(['starter','main_course','rice_dish','pasta_or_noodles','soup','salad','small_bites']),
         ];
     }
 }

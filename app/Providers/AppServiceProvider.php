@@ -31,15 +31,15 @@ class AppServiceProvider extends ServiceProvider
             'User Management',
         ]);
 
-        Filament::serving(function () {
-            Filament::registerNavigationItems([
-                NavigationItem::make('Scan QR')
-                    ->url('/admin/rsvps/scanqr', shouldOpenInNewTab: true)
-                    ->icon('heroicon-o-qr-code')
-                    ->activeIcon('heroicon-s-qr-code')
-                    ->group('Rsvp & Item orders')
-                    ->sort(3),
-            ]);
-        });
+        // Filament::serving(function () {
+        //     Filament::registerNavigationItems([
+        //         NavigationItem::make('Scan QR')
+        //             ->url('/admin/rsvps/scanqr', shouldOpenInNewTab: true)
+        //             ->icon('heroicon-o-qr-code')
+        //             ->activeIcon('heroicon-s-qr-code')
+        //             ->group('Rsvp & Item orders')
+        //             ->sort(3),
+        //     ]);
+        // });
     }
 }
