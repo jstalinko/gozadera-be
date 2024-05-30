@@ -16,7 +16,8 @@ class Product extends Model
         'item_point',
         'category',
         'stock',
-        'image'
+        'image',
+        'sub_category'
     ];
     public function promo()
     {
