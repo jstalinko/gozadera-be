@@ -44,8 +44,13 @@ class DashboardController extends Controller
         // print with username and user level
         foreach ($top10spender as $spender) {
             $member = Member::find($spender->member_id);
+            if($member){
             $spender->username = $member->username;
             $spender->level = MemberLevel::seeLevel($spender->member_id);
+            }else{
+            $spender->username = 'Unknown';
+            $spender->level = 'Unknown';
+            }
         }
 
         
