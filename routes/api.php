@@ -44,6 +44,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/profile' , [App\Http\Controllers\API\DashboardController::class , 'profile']);
 
     Route::get('/my-ticket' , [App\Http\Controllers\API\RSVPController::class , 'myTicket']);
+    Route::get('/rsvp-detail/{id}',[App\Http\Controllers\API\RSVPController::class , 'detail']);
     Route::get('/my-order' , [App\Http\Controllers\API\OrderController::class , 'myOrder']);
 
     Route::post('/redeem' , [App\Http\Controllers\API\ProductController::class , 'redeem']);

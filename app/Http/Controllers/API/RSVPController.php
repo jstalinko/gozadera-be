@@ -116,4 +116,26 @@ class RSVPController extends Controller
             return response()->json($data, 400, [], JSON_PRETTY_PRINT);
         }
     }
+
+    public function detail(Request $request)
+    {
+        $id = $request->id;
+        $member = auth()->user();
+        $rsvp = Rsvp::where('member_id', $member->id)->where('id',$id)->with('payments')->with('proofTransfer')->first();
+        if(!$rsvp)
+        {
+            return response()->json([
+                'code' => 404,
+                'status' => 'error',
+                'message' => 'not found'
+            ]);
+        }
+        return response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'message' => 'My Ticket',
+            'data' => $rsvp
+        ]);
+
+    }
 }
