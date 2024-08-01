@@ -44,7 +44,7 @@ class DashboardController extends Controller
         // print with username and user level
         foreach ($top10spender as $spender) {
             $member = Member::find($spender->member_id);
-            $member->total_transactions = $spender->total_payment;
+            $member->total_transactions = $spender->total_payment ?? 0;
             $member->save();
         }
 
