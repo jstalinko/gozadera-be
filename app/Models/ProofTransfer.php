@@ -9,6 +9,15 @@ class ProofTransfer extends Model
 {
     use HasFactory;
 
+    protected $fillable = 
+    [
+        'member_id',
+        'rsvp_id',
+        'order_id',
+        'image',
+        'note'
+];
+
     public function member()
     {
         return $this->belongsTo(Member::class, 'member_id','id');

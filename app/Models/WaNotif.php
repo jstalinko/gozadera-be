@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class WaNotif extends Model
 {
     use HasFactory;
+
+    protected $fillable = 
+    [
+        'type',
+        'message',
+        'active'
+    ];
 }

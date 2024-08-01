@@ -9,6 +9,11 @@ class MemberLevel extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'minumum_spend'
+    ];
+
     public static function seeLevel($member_id)
     {
         $costs = Order::where('member_id', $member_id)->sum('subtotal');
