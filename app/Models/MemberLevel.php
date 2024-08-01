@@ -15,4 +15,10 @@ class MemberLevel extends Model
         $level = MemberLevel::where('minumum_spend', '<=', $costs)->orderBy('minumum_spend', 'desc')->first();
         return $level->name;
     }
+
+    public static function seeLevelByTransaction($total)
+    {
+        $level = MemberLevel::where('minumum_spend','<=' , $total)->orderBy('minumum_spend','desc')->first();
+        return $level->name;
+    }
 }

@@ -23,7 +23,7 @@ class DashboardController extends Controller
 {
     public function banner(): JsonResponse
     {
-        $banners = Banner::where('status', 'active')->orderBy('id','desc')->get();
+        $banners = Banner::where('status', 'active')->orderBy('id', 'desc')->get();
 
         $data['code'] = 200;
         $data['status'] = 'success';
@@ -44,22 +44,22 @@ class DashboardController extends Controller
         // print with username and user level
         foreach ($top10spender as $spender) {
             $member = Member::find($spender->member_id);
-            if($member){
-            $spender->username = $member->username;
-            $spender->level = MemberLevel::seeLevel($spender->member_id);
-            }else{
-            $spender->username = 'Unknown';
-            $spender->level = 'Unknown';
-            }
+            $member->total_transactions = $spender->total_payment;
+            $member->save();
         }
 
-        
+        $top10spender2 = Member::select('username','total_transactions','email','id')->orderBy('total_transactions', 'desc')->limit(10)->get();
+        foreach ($top10spender2 as $spender) {
+            $spender->level = MemberLevel::seeLevelByTransaction($spender->total_transactions);
+        }
 
 
-        if(count($top10spender) < 1){
+
+
+        if (count($top10spender) < 1) {
             $datax = [];
-        }else{
-            $datax = $top10spender;
+        } else {
+            $datax = $top10spender2;
         }
         $data['code'] = 200;
         $data['status'] = 'success';
@@ -196,8 +196,6 @@ class DashboardController extends Controller
         $data['img_url'] = Storage::disk('public')->url($uploaded);
 
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-    
-        
     }
     public function uploadReceipt(Request $request): JsonResponse
     {
@@ -239,19 +237,17 @@ class DashboardController extends Controller
         $amount = $request->amount;
         $member = Member::find($code);
         $pointSetting = PointSetting::getPoint($amount);
-        if($member){
+        if ($member) {
             $member->point = $member->point + $pointSetting;
             $member->save();
             $data['code'] = 200;
             $data['status'] = 'success';
             $data['amount'] = $amount;
             $data['point']  = $pointSetting;
-            $data['message'] = $pointSetting.' points added to '.$member->username;
+            $data['message'] = $pointSetting . ' points added to ' . $member->username;
             $data['data'] = $member;
             return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-        
-
-        }else{
+        } else {
             $data['code'] = 400;
             $data['status'] = 'error';
             $data['message'] = 'Member not found';
@@ -261,10 +257,10 @@ class DashboardController extends Controller
 
     public function deactiveAccount()
     {
-       
+
         $data['code'] = 200;
         $data['status'] = 'success';
 
-        return response()->json($data,200,[],JSON_PRETTY_PRINT);
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 }
