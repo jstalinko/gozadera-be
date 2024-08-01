@@ -44,9 +44,10 @@ class DashboardController extends Controller
         // print with username and user level
         foreach ($top10spender as $spender) {
             $member = Member::find($spender->member_id);
-            print_r($member);
+            if($member){
             $member->total_transactions = $spender->total_payment;
             $member->save();
+            }
         }
 
         $top10spender2 = Member::select('username','total_transactions','email','id')->orderBy('total_transactions', 'desc')->limit(10)->get();
