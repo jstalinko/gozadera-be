@@ -23,7 +23,7 @@ class DashboardController extends Controller
 {
     public function banner(): JsonResponse
     {
-        $banners = Banner::where('status', 'active')->get();
+        $banners = Banner::where('status', 'active')->orderBy('id','desc')->get();
 
         $data['code'] = 200;
         $data['status'] = 'success';
@@ -257,5 +257,14 @@ class DashboardController extends Controller
             $data['message'] = 'Member not found';
             return response()->json($data, 400, [], JSON_PRETTY_PRINT);
         }
+    }
+
+    public function deactiveAccount()
+    {
+       
+        $data['code'] = 200;
+        $data['status'] = 'success';
+
+        return response()->json($data,200,[],JSON_PRETTY_PRINT);
     }
 }

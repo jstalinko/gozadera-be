@@ -42,7 +42,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::post('/update-profile',[App\Http\Controllers\API\DashboardController::class,'updateProfile']);
     Route::get('/profile' , [App\Http\Controllers\API\DashboardController::class , 'profile']);
-
+    Route::get('/deactive-account',[App\Http\Controllers\API\DashboardController::class,'deactiveAccount']);
     Route::get('/my-ticket' , [App\Http\Controllers\API\RSVPController::class , 'myTicket']);
     Route::get('/rsvp-detail/{id}',[App\Http\Controllers\API\RSVPController::class , 'detail']);
     Route::get('/my-order' , [App\Http\Controllers\API\OrderController::class , 'myOrder']);

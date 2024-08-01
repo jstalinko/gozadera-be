@@ -13,7 +13,7 @@ class EventController extends Controller
 {
     public function eventCategory(Request $request): JsonResponse
     {
-        $event = Event::where('type', $request->category)->get();
+        $event = Event::where('type', $request->category)->orderBy('id','desc')->get();
         $dateNow = date('Y-m-d H:i:s');
         foreach ($event as $key => $value) {
             if ($value->start_date > $dateNow) {
@@ -34,7 +34,7 @@ class EventController extends Controller
 
     public function events(): JsonResponse
     {
-        $event = Event::all();
+        $event = Event::where('type','event')->orderBy('id','desc')->get();
         $dateNow = date('Y-m-d H:i:s');
         foreach ($event as $key => $value) {
             if ($value->start_date > $dateNow) {
@@ -56,7 +56,7 @@ class EventController extends Controller
 
     public function gallery(Request $request): JsonResponse
     {
-        $gallery = Gallery::where('event_id', $request->event_id)->with('event')->get();
+        $gallery = Gallery::where('event_id', $request->event_id)->with('event')->orderBy('id','desc')->get();
         $event = Event::find($request->event_id);
         if ($event) {
             return response()->json([
