@@ -82,33 +82,20 @@ class RSVPController extends Controller
         if ($filter == null) {
             $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->with('payments')->with('proofTransfer')->orderBy('id', 'desc')->get();
         } else {
-            if ($filter == '30day') {
-                $rsvp = Rsvp::where('member_id', $member->id)
-                    ->whereDate('created_at', '>=', $thirtyDaysAgo)
-                    ->orderBy('created_at', 'desc')
-                    ->with('payments')
-                    ->with('proofTransfer')
-                    ->orderBy('id', 'desc')
-                    ->get();
-            } elseif ($filter == '90day') {
-                $rsvp = Rsvp::where('member_id', $member->id)
-                    ->whereDate('created_at', '>=', $nintyDaysAgo)
-                    ->orderBy('created_at', 'desc')
-                    ->with('payments')
-                    ->with('proofTransfer')
-                    ->orderBy('id', 'desc')
-                    ->get();
-            } else if($filter == '7day'){
-                $rsvp = Rsvp::where('member_id', $member->id)
-                ->whereDate('created_at', '>=', $sevenDaysAgo)
-                ->orderBy('created_at', 'desc')
-                ->with('payments')
-                ->with('proofTransfer')
+            $query = Rsvp::where('member_id', $member->id);
+
+            if ($filter === '30day') {
+                $query->where('created_at', '>=', Carbon::now()->subDays(30));
+            } elseif ($filter === '90day') {
+                $query->where('created_at', '>=', Carbon::now()->subDays(90));
+            } elseif ($filter === '7day') {
+                $query->where('created_at', '>=', Carbon::now()->subDays(7));
+            }
+            
+            $rsvp = $query->orderBy('created_at', 'desc')
+                ->with(['payments', 'proofTransfer'])
                 ->orderBy('id', 'desc')
                 ->get();
-            }else{
-                $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->with('payments')->with('proofTransfer')->orderBy('id', 'desc')->get();
-            }
         }
         return response()->json([
             'code' => 200,
