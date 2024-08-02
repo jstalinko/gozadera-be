@@ -110,6 +110,7 @@ class RSVPController extends Controller
             'code' => 200,
             'status' => 'success',
             'message' => 'My Ticket',
+            'filter' => $filter,
             'data' => $rsvp
         ]);
     }
