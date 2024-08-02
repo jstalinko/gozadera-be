@@ -94,7 +94,15 @@ class RSVPController extends Controller
                     ->with('proofTransfer')
                     ->orderBy('id', 'desc')
                     ->get();
-            } else {
+            } else if($filter == '7day'){
+                $rsvp = Rsvp::where('member_id', $member->id)
+                ->whereDate('created_at', '>=', Carbon::now()->subDays(7))
+                ->orderBy('created_at', 'desc')
+                ->with('payments')
+                ->with('proofTransfer')
+                ->orderBy('id', 'desc')
+                ->get();
+            }else{
                 $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->with('payments')->with('proofTransfer')->orderBy('id', 'desc')->get();
             }
         }
