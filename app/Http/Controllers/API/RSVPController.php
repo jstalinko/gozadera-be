@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use Carbon\Carbon;
 use App\Models\Rsvp;
 use App\Helper\Helper;
 use App\Models\Member;
@@ -70,10 +71,33 @@ class RSVPController extends Controller
         ]);
     }
 
-    public function myTicket(): JsonResponse
+    public function myTicket(Request $request): JsonResponse
     {
+        $filter = ($request->filter !== '') ? $request->filter : null;
         $member = auth()->user();
-        $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->with('payments')->with('proofTransfer')->get();
+        if ($filter == null) {
+            $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->with('payments')->with('proofTransfer')->orderBy('id', 'desc')->get();
+        } else {
+            if ($filter == '30day') {
+                $rsvp = Rsvp::where('member_id', $member->id)
+                    ->whereDate('created_at', '>=', Carbon::now()->subDays(30))
+                    ->orderBy('created_at', 'desc')
+                    ->with('payments')
+                    ->with('proofTransfer')
+                    ->orderBy('id', 'desc')
+                    ->get();
+            } elseif ($filter == '90day') {
+                $rsvp = Rsvp::where('member_id', $member->id)
+                    ->whereDate('created_at', '>=', Carbon::now()->subDays(90))
+                    ->orderBy('created_at', 'desc')
+                    ->with('payments')
+                    ->with('proofTransfer')
+                    ->orderBy('id', 'desc')
+                    ->get();
+            } else {
+                $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->with('payments')->with('proofTransfer')->orderBy('id', 'desc')->get();
+            }
+        }
         return response()->json([
             'code' => 200,
             'status' => 'success',
@@ -89,12 +113,10 @@ class RSVPController extends Controller
         if ($rsvp) {
             if ($rsvp->payment_status == 'paid') {
 
-                if($rsvp->pax_lefet == 0 || $rsvp->pax_left < 1)
-                {
+                if ($rsvp->pax_lefet == 0 || $rsvp->pax_left < 1) {
                     $data['status'] = 'error';
                     $data['message'] = 'Failed, Pax left is 0 !';
                     return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-                
                 }
                 $rsvp->status = 'check_in';
                 $rsvp->pax_left = $rsvp->pax_left - 1;
@@ -104,7 +126,6 @@ class RSVPController extends Controller
                 $data['message'] = 'Success check-in ( Pax left : ' . $rsvp->pax_left . ' )';
                 $data['data'] = $rsvp;
                 return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-            
             } else {
                 $data['status'] = 'error';
                 $data['message'] = 'This rsvp is not paid yet or not verified';
@@ -121,9 +142,8 @@ class RSVPController extends Controller
     {
         $id = $request->id;
         $member = auth()->user();
-        $rsvp = Rsvp::where('member_id', $member->id)->where('id',$id)->with('payments')->with('proofTransfer')->first();
-        if(!$rsvp)
-        {
+        $rsvp = Rsvp::where('member_id', $member->id)->where('id', $id)->with('payments')->with('proofTransfer')->first();
+        if (!$rsvp) {
             return response()->json([
                 'code' => 404,
                 'status' => 'error',
@@ -136,6 +156,5 @@ class RSVPController extends Controller
             'message' => 'My Ticket',
             'data' => $rsvp
         ]);
-
     }
 }
