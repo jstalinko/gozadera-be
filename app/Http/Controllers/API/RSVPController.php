@@ -75,12 +75,16 @@ class RSVPController extends Controller
     {
         $filter = ($request->filter !== '') ? $request->filter : null;
         $member = auth()->user();
+        $thirtyDaysAgo = date('Y-m-d', strtotime('-30 days'));
+        $sevenDaysAgo = date('Y-m-d', strtotime('-7 days'));
+        $nintyDaysAgo = date('Y-m-d', strtotime('-90 days'));
+
         if ($filter == null) {
             $rsvp = Rsvp::where('member_id', $member->id)->orderBy('created_at', 'desc')->with('payments')->with('proofTransfer')->orderBy('id', 'desc')->get();
         } else {
             if ($filter == '30day') {
                 $rsvp = Rsvp::where('member_id', $member->id)
-                    ->whereDate('created_at', '>=', Carbon::now()->subDays(30))
+                    ->whereDate('created_at', '>=', $thirtyDaysAgo)
                     ->orderBy('created_at', 'desc')
                     ->with('payments')
                     ->with('proofTransfer')
@@ -88,7 +92,7 @@ class RSVPController extends Controller
                     ->get();
             } elseif ($filter == '90day') {
                 $rsvp = Rsvp::where('member_id', $member->id)
-                    ->whereDate('created_at', '>=', Carbon::now()->subDays(90))
+                    ->whereDate('created_at', '>=', $nintyDaysAgo)
                     ->orderBy('created_at', 'desc')
                     ->with('payments')
                     ->with('proofTransfer')
@@ -96,7 +100,7 @@ class RSVPController extends Controller
                     ->get();
             } else if($filter == '7day'){
                 $rsvp = Rsvp::where('member_id', $member->id)
-                ->whereDate('created_at', '>=', Carbon::now()->subDays(7))
+                ->whereDate('created_at', '>=', $sevenDaysAgo)
                 ->orderBy('created_at', 'desc')
                 ->with('payments')
                 ->with('proofTransfer')
