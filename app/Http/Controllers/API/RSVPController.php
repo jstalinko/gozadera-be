@@ -85,11 +85,11 @@ class RSVPController extends Controller
             $query = Rsvp::where('member_id', $member->id);
 
             if ($filter === '30day') {
-                $query->where('created_at', '>=', Carbon::now()->subDays(30));
+                $query->where('created_at', '<=', Carbon::now()->subDays(30));
             } elseif ($filter === '90day') {
-                $query->where('created_at', '>=', Carbon::now()->subDays(90));
+                $query->where('created_at', '<=', Carbon::now()->subDays(90));
             } elseif ($filter === '7day') {
-                $query->where('created_at', '>=', Carbon::now()->subDays(7));
+                $query->where('created_at', '<=', Carbon::now()->subDays(7));
             }
             
             $rsvp = $query->orderBy('created_at', 'desc')
