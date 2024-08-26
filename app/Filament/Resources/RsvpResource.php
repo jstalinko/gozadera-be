@@ -106,6 +106,12 @@ class RsvpResource extends Resource
                     'waiting_payment' => 'warning',
                 })
                     ->sortable(),
+                Tables\Columns\TextColumn::make('proof_transfer')
+                    ->label('Proof Transfer')
+                    ->getStateUsing(function ($record) {
+                        $proofTransfer = $record->proofTransfer;
+                        return $proofTransfer ? '<a href="'.$proofTransfer->image .'" target="_blank" class="btn">Lihat Bukti</a>' : 'No Proof';
+                    })->html(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
