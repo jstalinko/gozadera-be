@@ -15,7 +15,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\RsvpResource\Pages;
-
+use Filament\Tables\Filters\SelectFilter;
 
 class RsvpResource extends Resource
 {
@@ -32,7 +32,7 @@ class RsvpResource extends Resource
                 Forms\Components\Select::make('member_id')
                     ->relationship('member', 'username')
                     ->required()->native(false),
-               Forms\Components\TextInput::make('invoice')->readonly(),
+                Forms\Components\TextInput::make('invoice')->readonly(),
                 Forms\Components\DatePicker::make('rsvp_date')
                     ->required(),
                 Forms\Components\Select::make('status')
@@ -62,8 +62,8 @@ class RsvpResource extends Resource
     {
         return static::getModel()::count();
     }
-    
-    
+
+
     public static function table(Table $table): Table
     {
         return $table
@@ -91,14 +91,14 @@ class RsvpResource extends Resource
                 Tables\Columns\TextColumn::make('total')
                     ->numeric()
                     ->sortable()->money('IDR'),
-                Tables\Columns\BadgeColumn::make('payment_status')->color(fn (string $state): string => match ($state) {
+                Tables\Columns\BadgeColumn::make('payment_status')->color(fn(string $state): string => match ($state) {
                     'unpaid' => 'danger',
                     'paid' => 'success',
                     'expired' => 'grey',
                     'cancelled' => 'grey',
                 })
                     ->sortable(),
-                Tables\Columns\BadgeColumn::make('status')->color(fn (string $state): string => match ($state) {
+                Tables\Columns\BadgeColumn::make('status')->color(fn(string $state): string => match ($state) {
                     'check_in' => 'success',
                     'check_out' => 'danger',
                     'cancelled' => 'grey',
@@ -111,8 +111,8 @@ class RsvpResource extends Resource
                     ->label('Proof Transfer')
                     ->getStateUsing(function ($record) {
                         $proofTransfer = $record->proofTransfer;
-                        return $proofTransfer ? '<a href="'.$proofTransfer->image .'" target="_blank" class="btn">Lihat Bukti</a>' : 'No Proof';
-                    })->html(),
+                        return $proofTransfer ? '<a href="' . $proofTransfer->image . '" target="_blank" class="btn">Lihat Bukti</a>' : 'No Proof';
+                    })->html()->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -123,7 +123,15 @@ class RsvpResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('payment_status')
+                ->options([
+                    'unpaid' => 'Unpaid',
+                    'paid' => 'Paid',
+                    'canceled' => 'Canceled',
+                    'expired' => 'Expired',
+                ])
+                ->label('Payment Status'),
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -133,7 +141,7 @@ class RsvpResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('Mark as Paid')
-                        ->action(function(Collection $records) {
+                        ->action(function (Collection $records) {
                             $records->each(function (Rsvp $record) {
                                 $record->update([
                                     'payment_status' => 'paid',
@@ -141,10 +149,10 @@ class RsvpResource extends Resource
                                 ]);
 
 
-                            Notification::make()
-                            ->title('#'.$record->invoice . ' has been paid')
-                            ->success()
-                            ->send();
+                                Notification::make()
+                                    ->title('#' . $record->invoice . ' has been paid')
+                                    ->success()
+                                    ->send();
                             });
                         })
                         ->deselectRecordsAfterCompletion()
@@ -152,7 +160,6 @@ class RsvpResource extends Resource
                         ->icon('heroicon-o-check-circle'),
                 ]),
             ])->searchable();
-            
     }
 
     public static function getRelations(): array
