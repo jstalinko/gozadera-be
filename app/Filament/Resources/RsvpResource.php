@@ -69,7 +69,8 @@ class RsvpResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('invoice')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('rsvp_date')
                     ->date()
                     ->sortable(),
