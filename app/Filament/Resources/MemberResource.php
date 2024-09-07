@@ -41,9 +41,12 @@ class MemberResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')->label('Pic')->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('username'),
-                Tables\Columns\TextColumn::make('email')->sortable()->copyable(),
-                Tables\Columns\TextColumn::make('phone'),
+                Tables\Columns\TextColumn::make('username')
+                ->searchable(),
+                Tables\Columns\TextColumn::make('email')->sortable()->copyable()
+                ->searchable(),
+                Tables\Columns\TextColumn::make('phone')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('point')->sortable(),
                 Tables\Columns\BadgeColumn::make('status')->color(fn (string $state): string => match ($state) {
                     'inactive' => 'gray',
