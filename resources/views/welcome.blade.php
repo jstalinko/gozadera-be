@@ -28,8 +28,8 @@
 
     <!-- button menu & login -->
     <div style="text-align: center;">
-        <a href="#" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; margin: 10px;">Menu</a>
-        <a href="#" style="padding: 10px 20px; background-color: #f44336; color: white; text-decoration: none; margin: 10px;">Login</a>
+        <a href="https://gozadera.id" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; margin: 10px;">Menu</a>
+        <a href="/admin/login" style="padding: 10px 20px; background-color: #f44336; color: white; text-decoration: none; margin: 10px;">Login</a>
     </div>
 
    <div style="text-align: center; padding: 20px;">

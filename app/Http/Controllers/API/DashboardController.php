@@ -204,9 +204,7 @@ class DashboardController extends Controller
         $member = Member::find(auth()->user()->id);
         $fileImage = $request->file('image');
         $uploadPath = 'receipt';
-
-
-
+        
         $allowedExt = ['jpg', 'jpeg', 'png', 'pdf', 'gif', 'HEIC', 'heic', 'IMG', 'img'];
         $ext = $fileImage->getClientOriginalExtension();
         if (!in_array($ext, $allowedExt)) {

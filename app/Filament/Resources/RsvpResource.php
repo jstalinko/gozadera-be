@@ -35,17 +35,7 @@ class RsvpResource extends Resource
                 Forms\Components\TextInput::make('invoice')->readonly(),
                 Forms\Components\DatePicker::make('rsvp_date')
                     ->required(),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'check_in' => 'Check In',
-                        'check_out' => 'Check Out',
-                        'cancelled' => 'Cancelled',
-                        'expired' => 'Expired',
-                        'issued' => 'Issued',
-                        'waiting_payment' => 'Waiting Payment',
-                    ])
-                    ->required()
-                    ->native(false),
+                Forms\Components\TextInput::make('total')->numeric(),
                 Forms\Components\Select::make('payment_status')
                     ->options([
                         'unpaid' => 'Unpaid',
@@ -122,6 +112,7 @@ class RsvpResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('id','desc')
             ->filters([
                 SelectFilter::make('payment_status')
                 ->options([

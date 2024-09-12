@@ -17,4 +17,16 @@ class EditRsvp extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $STATUS = [
+            'paid' => 'issued',
+            'unpaid' => 'waiting_payment',
+            'canceled' => 'canceled',
+            'expired' => 'expired'
+        ];
+        $data['status'] = $STATUS[$data['payment_status']];
+
+        return $data;
+    }
 }
