@@ -97,12 +97,12 @@ class RsvpResource extends Resource
                     'waiting_payment' => 'warning',
                 })
                     ->sortable(),
-                Tables\Columns\TextColumn::make('proof_transfer')
+                Tables\Columns\TextColumn::make('proofTransfer')
                     ->label('Proof Transfer')
                     ->getStateUsing(function ($record) {
                         $proofTransfer = $record->proofTransfer;
                         return $proofTransfer ? '<a href="' . $proofTransfer->image . '" target="_blank" class="btn">Lihat Bukti</a>' : 'No Proof';
-                    })->html()->sortable(),
+                    })->html(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -122,6 +122,22 @@ class RsvpResource extends Resource
                     'expired' => 'Expired',
                 ])
                 ->label('Payment Status'),
+                SelectFilter::make('proof_transfer')
+    ->label('Proof Transfer')
+    ->options([
+        'with_proof' => 'Bukti Transfer',  // Records with proof_transfer
+        'no_proof' => 'No Proof',          // Records without proof_transfer
+    ])
+    ->query(function (Builder $query, $state) {
+         // Check if 'with_proof' or 'no_proof' is being passed
+        if ($state['value'] === 'with_proof') {
+            $query->whereHas('proofTransfer');
+        } elseif ($state['value'] === 'no_proof') {
+            $query->whereDoesntHave('proofTransfer');
+        }
+    }),
+    
+
 
             ])
             ->actions([

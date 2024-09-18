@@ -30,4 +30,5 @@ class Order extends Model
     {
         return $this->belongsTo(OutletTable::class , 'table_id' , 'id');
     }
+   
 }
